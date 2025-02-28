@@ -1,7 +1,7 @@
 {
 	"name" : "n2n/valobj",
 	"type" : "library",
-	"description" : "Contains n2n typical implementations of common value objects.",
+	"description" : "Contains typical n2n implementations of common value objects.",
 	"keywords" : [
 		"n2n",
 		"batch job"
