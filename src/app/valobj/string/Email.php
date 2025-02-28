@@ -1,8 +1,7 @@
 <?php
 
-namespace n2n\valobj\impl\string;
+namespace valobj\string;
 
-use n2n\valobj\attribute\BindProfile;
 use n2n\bind\mapper\impl\Mappers;
 use n2n\bind\mapper\Mapper;
 use n2n\spec\valobj\scalar\StringValueObject;

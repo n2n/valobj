@@ -1,8 +1,8 @@
 <?php
 
-namespace n2n\valobj\impl;
+namespace valobj;
 
-use n2n\valobj\impl\string\Email;
+use valobj\string\Email;
 use n2n\util\ex\ExUtils;
 
 class ValueObjects {
