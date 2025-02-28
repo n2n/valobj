@@ -44,7 +44,7 @@ class EmailTest extends TestCase {
 	function testUnmarshal(): void {
 		$result = Bind::values('holeradio@huii.ch', null)
 				->map(Mappers::unmarshal(Email::class))
-				->toValue($v)
+				->toValue()
 				->exec();
 
 		$this->assertEquals(new Email('holeradio@huii.ch'), $result->get()[0]);
