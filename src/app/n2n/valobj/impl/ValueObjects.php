@@ -3,14 +3,11 @@
 namespace n2n\valobj\impl;
 
 use n2n\valobj\impl\string\Email;
-use n2n\util\valobj\IncompatibleValueException;
+use n2n\util\ex\ExUtils;
 
 class ValueObjects {
 
-	/**
-	 * @throws IncompatibleValueException
-	 */
 	static function email(string $email): Email {
-		return new Email($email);
+		return ExUtils::try(fn () => new Email($email));
 	}
 }
