@@ -15,4 +15,8 @@ class ValueObjects {
 	static function name(string $value): Name {
 		return ExUtils::try(fn () => new Name($value));
 	}
+
+//	static function title(string $value): Title {
+//		return ExUtils::try(fn () => new Title($value));
+//	}
 }

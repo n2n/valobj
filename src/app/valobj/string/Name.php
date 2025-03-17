@@ -12,7 +12,7 @@ use n2n\spec\valobj\err\IllegalValueException;
 use n2n\validation\validator\impl\Validators;
 use n2n\util\StringUtils;
 
-class Name implements StringValueObject, \Stringable {
+class Name extends StringValueObjectAdapter {
 
 	public function __construct(private string $value) {
 		IllegalValueException::assertTrue(ValidationUtils::maxlength($this->value, 63));
@@ -27,10 +27,6 @@ class Name implements StringValueObject, \Stringable {
 	static function unmarshalMapper(): Mapper {
 		return Mappers::pipe(Mappers::cleanString(maxlength: 63),
 				Mappers::valueNotNullClosure(fn (string $value) => new self($value)));
-	}
-
-	public function __toString(): string {
-		return $this->toScalar();
 	}
 
 	function toScalar(): string {
