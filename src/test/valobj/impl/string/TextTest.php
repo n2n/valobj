@@ -12,13 +12,13 @@ use n2n\bind\build\impl\Bind;
 use n2n\bind\mapper\impl\Mappers;
 use n2n\validation\plan\ErrorMap;
 use valobj\string\Text;
+use n2n\spec\valobj\err\IllegalValueException;
 
 class TextTest extends TestCase {
 
 
 	function testConstruct(): void {
 		$text = ValueObjects::text('Testerich');
-		$this->assertTrue($text instanceof Text);
 		$this->assertEquals('Testerich', $text->toScalar());
 
 		//as long only visible chars are used (and maybe spaces between) almost anything is possible even emojis
@@ -47,15 +47,17 @@ class TextTest extends TestCase {
 	 * @throws BindTargetException
 	 * @throws BindMismatchException
 	 * @throws UnresolvableBindableException
+	 * @throws IllegalValueException
 	 */
 	function testUnmarshal(): void {
-		$result = Bind::values('Testerich', null)
+		$result = Bind::values('Testerich', 'Testerich' . PHP_EOL . 'von Testen', null)
 				->map(Mappers::unmarshal(Text::class))
 				->toValue()
 				->exec();
 
 		$this->assertEquals(new Text('Testerich'), $result->get()[0]);
-		$this->assertNull($result->get()[1]);
+		$this->assertEquals(new Text('Testerich' . PHP_EOL . 'von Testen'), $result->get()[1]);
+		$this->assertNull($result->get()[2]);
 	}
 
 	/**

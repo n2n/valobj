@@ -11,7 +11,8 @@ use n2n\spec\valobj\err\IllegalValueException;
 
 class Email extends StringValueObjectAdapter {
 
-	public function __construct(private string $value) {
+	public function __construct(string $value) {
+		parent::__construct($value);
 		IllegalValueException::assertTrue(
 				ValidationUtils::isLowerCaseOnly($this->value) && ValidationUtils::isEmail($this->value),
 					'Illegal e-mail value: ' . $this->value);
@@ -25,9 +26,5 @@ class Email extends StringValueObjectAdapter {
 	#[Unmarshal]
 	static function unmarshalMapper(): Mapper {
 		return Mappers::pipe(Mappers::email(), Mappers::valueNotNullClosure(fn (string $email) => new self($email)));
-	}
-
-	function toScalar(): string {
-		return $this->value;
 	}
 }

@@ -18,7 +18,6 @@ class LongLabelTest extends TestCase {
 
 	function testConstruct(): void {
 		$longLabel = ValueObjects::longLabel('Testerich');
-		$this->assertTrue($longLabel instanceof LongLabel);
 		$this->assertEquals('Testerich', $longLabel->toScalar());
 
 		//as long only visible chars are used (and maybe spaces between) almost anything is possible even emojis

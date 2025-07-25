@@ -19,7 +19,8 @@ class ValueObjects {
 	}
 
 	static function longLabel(string $value): LongLabel {
-		return ExUtils::try(fn () => new LongLabel($value));}
+		return ExUtils::try(fn () => new LongLabel($value));
+	}
 
 	static function text(string $value): Text {
 		return ExUtils::try(fn () => new Text($value));

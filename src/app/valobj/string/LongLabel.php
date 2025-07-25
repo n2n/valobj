@@ -16,7 +16,8 @@ class LongLabel extends StringValueObjectAdapter {
 	 * @param string $value that is clean according to {@link StringUtils::isClean} and max 255 chars long
 	 * @throws IllegalValueException if passed value is invalid.
 	 */
-	public function __construct(private string $value) {
+	public function __construct(string $value) {
+		parent::__construct($value);
 		IllegalValueException::assertTrue(ValidationUtils::maxlength($this->value, 255),
 				'Value too long: ' . $this->value);
 		IllegalValueException::assertTrue(StringUtils::isClean($value, true),
@@ -32,9 +33,5 @@ class LongLabel extends StringValueObjectAdapter {
 	static function unmarshalMapper(): Mapper {
 		return Mappers::pipe(Mappers::cleanString(maxlength: 255),
 				Mappers::valueNotNullClosure(fn (string $value) => new self($value)));
-	}
-
-	function toScalar(): string {
-		return $this->value;
 	}
 }
