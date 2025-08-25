@@ -7,6 +7,7 @@ use n2n\util\ex\ExUtils;
 use valobj\string\Name;
 use valobj\string\LongLabel;
 use valobj\string\Text;
+use valobj\int\NbId;
 
 class ValueObjects {
 
@@ -24,6 +25,10 @@ class ValueObjects {
 
 	static function text(string $value): Text {
 		return ExUtils::try(fn () => new Text($value));
+	}
+
+	static function nbId(int $value): NbId {
+		return ExUtils::try(fn () => new NbId($value));
 	}
 
 //	static function title(string $value): Title {

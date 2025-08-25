@@ -15,7 +15,7 @@ class Email extends StringValueObjectAdapter {
 		parent::__construct($value);
 		IllegalValueException::assertTrue(
 				ValidationUtils::isLowerCaseOnly($this->value) && ValidationUtils::isEmail($this->value),
-					'Illegal e-mail value: ' . $this->value);
+				'Illegal e-mail value: ' . $this->value);
 	}
 
 	#[Marshal]

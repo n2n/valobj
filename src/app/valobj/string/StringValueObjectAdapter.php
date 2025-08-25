@@ -8,10 +8,9 @@ use n2n\validation\validator\impl\ValidationUtils;
 
 abstract class StringValueObjectAdapter implements StringValueObject, \Stringable, \JsonSerializable {
 
-	public function __construct(protected string $value) {
+	function __construct(protected string $value) {
 		IllegalValueException::assertTrue(ValidationUtils::minlength($this->value, 1),
 				'Empty string not allowed.');
-
 	}
 
 	function equals(StringValueObject $stringValueObject): bool {
