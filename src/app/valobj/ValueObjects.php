@@ -8,6 +8,7 @@ use valobj\string\Name;
 use valobj\string\LongLabel;
 use valobj\string\Text;
 use valobj\int\NbId;
+use valobj\float\TypicalTwoDigitDecimalTrait;
 
 class ValueObjects {
 

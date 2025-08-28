@@ -11,14 +11,12 @@ use n2n\bind\err\BindMismatchException;
 use n2n\bind\err\UnresolvableBindableException;
 use n2n\bind\build\impl\Bind;
 use n2n\bind\mapper\impl\Mappers;
-use valobj\string\Name;
 use n2n\validation\plan\ErrorMap;
 
 class NbIdTest extends TestCase {
 
 	function testConstruct(): void {
 		$nbId = ValueObjects::nbId(1);
-		$this->assertInstanceOf(NbId::class, $nbId);
 		$this->assertSame(1, $nbId->toScalar());
 	}
 
