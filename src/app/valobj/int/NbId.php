@@ -22,7 +22,8 @@ class NbId extends IntValueObjectAdapter {
 
 	#[Unmarshal]
 	static function unmarshalMapper(): Mapper {
+		$class = new \ReflectionClass(static::class);
 		return Mappers::pipe(Mappers::int(false, 1, PHP_INT_MAX),
-				Mappers::valueNotNullClosure(fn (int $id) => new static($id)));
+				Mappers::valueNotNullClosure(fn (int $id) => $class->newInstance($id)));
 	}
 }

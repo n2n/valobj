@@ -8,7 +8,7 @@ use valobj\string\Name;
 use valobj\string\LongLabel;
 use valobj\string\Text;
 use valobj\int\NbId;
-use valobj\float\TypicalTwoDigitDecimalTrait;
+use valobj\float\TypicalTwoDigitDecimal;
 
 class ValueObjects {
 
@@ -34,5 +34,9 @@ class ValueObjects {
 
 //	static function title(string $value): Title {
 //		return ExUtils::try(fn () => new Title($value));
+//	}
+
+//	static function typicalTwoDigitDecimal(float $value): TypicalTwoDigitDecimal {
+//		return ExUtils::try(fn () => new TypicalTwoDigitDecimal($value));
 //	}
 }
