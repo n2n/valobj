@@ -19,6 +19,11 @@ class StringValueObjectAdapterTest extends TestCase {
 	function testEquals(): void {
 		$this->assertTrue((new Email('holeradio@huii.ch'))->equals(new Email('holeradio@huii.ch')));
 		$this->assertFalse((new Email('holeradio@super-huii.ch'))->equals(new Email('holeradio@huii.ch')));
+
+		$this->assertTrue((new Email('holeradio@huii.ch'))->equals('holeradio@huii.ch'));
+		$this->assertFalse((new Email('holeradio@super-huii.ch'))->equals('holeradio@huii.ch'));
+
+		$this->assertFalse((new Email('holeradio@super-huii.ch'))->equals(null));
 	}
 
 	function testEmptyString(): void {

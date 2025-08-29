@@ -13,7 +13,14 @@ abstract class StringValueObjectAdapter implements StringValueObject, \Stringabl
 				'Empty string not allowed.');
 	}
 
-	function equals(StringValueObject $stringValueObject): bool {
+	function equals(StringValueObject|string|null $stringValueObject): bool {
+		if ($stringValueObject === null) {
+			return false;
+		}
+
+		if (is_string($stringValueObject)) {
+			return $stringValueObject === $this->value;
+		}
 		return $this->toScalar() === $stringValueObject->toScalar();
 	}
 
