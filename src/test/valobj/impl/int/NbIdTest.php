@@ -12,6 +12,8 @@ use n2n\bind\err\UnresolvableBindableException;
 use n2n\bind\build\impl\Bind;
 use n2n\bind\mapper\impl\Mappers;
 use n2n\validation\plan\ErrorMap;
+use valobj\impl\int\mock\SubNbId;
+use n2n\spec\valobj\err\IllegalValueException;
 
 class NbIdTest extends TestCase {
 
@@ -55,5 +57,21 @@ class NbIdTest extends TestCase {
 		$errorMap = $result->getErrorMap();
 		$this->assertTrue(assert($errorMap instanceof ErrorMap));
 		$this->assertEquals('Min [min = 1]', (string) $errorMap->getAllMessages()[0]);
+	}
+
+	/**
+	 * @throws BindMismatchException
+	 * @throws UnresolvableBindableException
+	 * @throws IllegalValueException
+	 */
+	function testUnmarshalSubclass(): void {
+		$result = Bind::values(1)
+				->map(Mappers::unmarshal(SubNbId::class))
+				->toValue()
+				->exec();
+
+		$subNbId = $result->get();
+		$this->assertInstanceOf(SubNbId::class, $subNbId);
+		$this->assertEquals(new SubNbId(1), $subNbId);
 	}
 }
