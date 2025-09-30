@@ -22,7 +22,7 @@
 	},
 	"require" : {
         "n2n/n2n-spec-valobj": "^1",
-        "n2n/n2n-bind": "~7.4.2",
+        "n2n/n2n-bind": "~7.4.4",
         "n2n/n2n-util": "~7.4.4"
     },
 	"autoload" : {

@@ -9,6 +9,7 @@ use valobj\string\LongLabel;
 use valobj\string\Text;
 use valobj\int\NbId;
 use valobj\float\TypicalTwoDigitDecimal;
+use valobj\string\ColorHex;
 
 class ValueObjects {
 
@@ -30,6 +31,10 @@ class ValueObjects {
 
 	static function nbId(int $value): NbId {
 		return ExUtils::try(fn () => new NbId($value));
+	}
+
+	static function colorHex(string $value): ColorHex {
+		return ExUtils::try(fn () => new ColorHex($value));
 	}
 
 //	static function title(string $value): Title {
