@@ -10,6 +10,7 @@ use valobj\string\Text;
 use valobj\int\NbId;
 use valobj\float\TypicalTwoDigitDecimal;
 use valobj\string\ColorHex;
+use valobj\string\ShortLabel;
 
 class ValueObjects {
 
@@ -19,6 +20,10 @@ class ValueObjects {
 
 	static function name(string $value): Name {
 		return ExUtils::try(fn () => new Name($value));
+	}
+
+	static function shortLabel(string $value): ShortLabel {
+		return ExUtils::try(fn () => new ShortLabel($value));
 	}
 
 	static function longLabel(string $value): LongLabel {
