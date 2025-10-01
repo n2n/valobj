@@ -12,6 +12,8 @@ use n2n\bind\err\UnresolvableBindableException;
 use n2n\bind\build\impl\Bind;
 use n2n\bind\mapper\impl\Mappers;
 use n2n\validation\plan\ErrorMap;
+use valobj\impl\string\mock\SubShortLabel;
+use valobj\impl\string\mock\SubName;
 
 class NameTest extends TestCase {
 
@@ -94,5 +96,20 @@ class NameTest extends TestCase {
 
 		$this->assertEquals('Testerich', $result->get()[0]);
 		$this->assertNull($result->get()[1]);
+	}
+
+	/**
+	 * @throws BindMismatchException
+	 * @throws UnresolvableBindableException
+	 */
+	function testUnmarshalSubclass(): void {
+		$result = Bind::values('myname')
+				->map(Mappers::unmarshal(SubName::class))
+				->toValue()
+				->exec();
+
+		$subName = $result->get();
+		$this->assertInstanceOf(SubName::class, $subName);
+		$this->assertEquals(new SubName('myname'), $subName);
 	}
 }

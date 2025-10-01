@@ -12,6 +12,9 @@ use n2n\bind\build\impl\Bind;
 use n2n\bind\mapper\impl\Mappers;
 use n2n\validation\plan\ErrorMap;
 use valobj\string\ShortLabel;
+use n2n\spec\valobj\err\IllegalValueException;
+use valobj\impl\int\mock\SubNbId;
+use valobj\impl\string\mock\SubShortLabel;
 
 class ShortLabelTest extends TestCase {
 
@@ -92,5 +95,20 @@ class ShortLabelTest extends TestCase {
 
 		$this->assertEquals('Testerich', $result->get()[0]);
 		$this->assertNull($result->get()[1]);
+	}
+
+	/**
+	 * @throws BindMismatchException
+	 * @throws UnresolvableBindableException
+	 */
+	function testUnmarshalSubclass(): void {
+		$result = Bind::values('very-short')
+				->map(Mappers::unmarshal(SubShortLabel::class))
+				->toValue()
+				->exec();
+
+		$subShortLabel = $result->get();
+		$this->assertInstanceOf(SubShortLabel::class, $subShortLabel);
+		$this->assertEquals(new SubShortLabel('very-short'), $subShortLabel);
 	}
 }

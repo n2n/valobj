@@ -31,7 +31,8 @@ class ShortLabel extends StringValueObjectAdapter {
 
 	#[Unmarshal]
 	static function unmarshalMapper(): Mapper {
+		$class = new \ReflectionClass(static::class);
 		return Mappers::pipe(Mappers::cleanString(maxlength: 31),
-				Mappers::valueNotNullClosure(fn (string $value) => new self($value)));
+				Mappers::valueNotNullClosure(fn (string $arg) => $class->newInstance($arg)));
 	}
 }

@@ -12,6 +12,7 @@ use n2n\bind\build\impl\Bind;
 use n2n\bind\mapper\impl\Mappers;
 use n2n\validation\plan\ErrorMap;
 use valobj\string\LongLabel;
+use valobj\impl\string\mock\SubLongLabel;
 
 class LongLabelTest extends TestCase {
 
@@ -92,5 +93,20 @@ class LongLabelTest extends TestCase {
 
 		$this->assertEquals('Testerich', $result->get()[0]);
 		$this->assertNull($result->get()[1]);
+	}
+
+	/**
+	 * @throws BindMismatchException
+	 * @throws UnresolvableBindableException
+	 */
+	function testUnmarshalSubclass(): void {
+		$result = Bind::values('very-short')
+				->map(Mappers::unmarshal(SubLongLabel::class))
+				->toValue()
+				->exec();
+
+		$subLongLabel = $result->get();
+		$this->assertInstanceOf(SubLongLabel::class, $subLongLabel);
+		$this->assertEquals(new SubLongLabel('very-short'), $subLongLabel);
 	}
 }
