@@ -11,6 +11,7 @@ use valobj\int\NbId;
 use valobj\float\TypicalTwoDigitDecimal;
 use valobj\string\ColorHex;
 use valobj\string\ShortLabel;
+use valobj\int\PositiveInt;
 
 class ValueObjects {
 
@@ -32,6 +33,10 @@ class ValueObjects {
 
 	static function text(string $value): Text {
 		return ExUtils::try(fn () => new Text($value));
+	}
+
+	static function positiveInt(int $value): PositiveInt {
+		return ExUtils::try(fn () => new PositiveInt($value));
 	}
 
 	static function nbId(int $value): NbId {
