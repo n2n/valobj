@@ -13,6 +13,7 @@ use valobj\string\ColorHex;
 use valobj\string\ShortLabel;
 use valobj\int\PositiveInt;
 use valobj\int\NbIdArray;
+use valobj\string\MediumLabel;
 
 class ValueObjects {
 
@@ -26,6 +27,10 @@ class ValueObjects {
 
 	static function shortLabel(string $value): ShortLabel {
 		return ExUtils::try(fn () => new ShortLabel($value));
+	}
+
+	static function mediumLabel(string $value): MediumLabel {
+		return ExUtils::try(fn () => new MediumLabel($value));
 	}
 
 	static function longLabel(string $value): LongLabel {
