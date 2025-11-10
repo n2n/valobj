@@ -14,7 +14,9 @@ use n2n\spec\valobj\scalar\IntValueObject;
 use n2n\validation\validator\impl\Validators;
 
 /**
- *
+ * @template K
+ * @template V
+ * @extends TypedArray<K, V>
  */
 #[ValueType(IntValueObject::class)]
 abstract class IntValueObjectArrayAdapter extends TypedArray {

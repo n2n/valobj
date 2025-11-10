@@ -9,6 +9,10 @@ use n2n\bind\mapper\impl\Mappers;
 use n2n\bind\attribute\impl\Unmarshal;
 use n2n\util\col\attribute\ValueType;
 
+
+/**
+ * @extends IntValueObjectArrayAdapter<scalar, NbId>
+ */
 #[ValueType(NbId::class)]
-class NbIdArray extends PositiveIntArray {
+class NbIdArray extends IntValueObjectArrayAdapter {
 }
