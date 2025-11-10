@@ -12,6 +12,7 @@ use valobj\float\TypicalTwoDigitDecimal;
 use valobj\string\ColorHex;
 use valobj\string\ShortLabel;
 use valobj\int\PositiveInt;
+use valobj\int\NbIdArray;
 
 class ValueObjects {
 
@@ -41,6 +42,10 @@ class ValueObjects {
 
 	static function nbId(int $value): NbId {
 		return ExUtils::try(fn () => new NbId($value));
+	}
+
+	static function nbIdArray(array $nbIds): NbIdArray {
+		return ExUtils::try(fn () => new NbIdArray($nbIds));
 	}
 
 	static function colorHex(string $value): ColorHex {
