@@ -24,26 +24,18 @@ class DateArray extends TypedArray {
 
 	#[Marshal]
 	static function marshalMapper(): Mapper {
-		return Mappers::valueClosure(fn (DateArray $dates) => array_map(
+		return Mappers::value(fn (DateArray $dates) => array_map(
 				fn (Date $date) => DateUtils::dateToSql($date),
 				$dates->toArray()));
 	}
 
 	#[Unmarshal]
 	static function unmarshalMapper(): Mapper {
+		$class = new \ReflectionClass(static::class);
 		return Mappers::pipe(
-				Mappers::subForeach(
-						Mappers::bindableNotNullClosure(function ($bindable) {
-							try {
-								$bindable->setValue(new Date($bindable->getValue()));
-							} catch (DateParseException $e) {
-								$bindable->addError(ValidationMessages::invalid());
-								$bindable->setDirty(true);
-							}
-						}),
-						Validators::mandatoryIf(!$namedTypeConstraint->allowsNull())),
+				Mappers::subForeach(Mappers::date(true)),
 				Mappers::subMerge(),
-				Mappers::valueClosure(fn (array $dates) => $class->newInstance($dates)));
+				Mappers::value(fn (array $dates) => $class->newInstance($dates)));
 	}
 }
 
