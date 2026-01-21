@@ -12,7 +12,6 @@ use n2n\bind\err\UnresolvableBindableException;
 use n2n\bind\build\impl\Bind;
 use n2n\bind\mapper\impl\Mappers;
 use n2n\validation\plan\ErrorMap;
-use valobj\impl\string\mock\SubShortLabel;
 use valobj\impl\string\mock\SubName;
 
 class NameTest extends TestCase {

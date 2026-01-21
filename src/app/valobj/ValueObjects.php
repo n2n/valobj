@@ -14,6 +14,7 @@ use valobj\string\ShortLabel;
 use valobj\int\PositiveInt;
 use valobj\int\NbIdArray;
 use valobj\string\MediumLabel;
+use valobj\string\LatinString;
 
 class ValueObjects {
 
@@ -55,6 +56,10 @@ class ValueObjects {
 
 	static function colorHex(string $value): ColorHex {
 		return ExUtils::try(fn () => new ColorHex($value));
+	}
+
+	static function latinString(string $value): LatinString {
+		return ExUtils::try(fn () => new LatinString($value));
 	}
 
 //	static function title(string $value): Title {
