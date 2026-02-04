@@ -34,7 +34,7 @@ class TextTest extends TestCase {
 
 	function testConstructExceptionBecauseToLong(): void {
 		$this->expectException(IllegalStateException::class);
-		ValueObjects::text(str_repeat('s', 5001));
+		ValueObjects::text(str_repeat('s', 5501));
 	}
 
 	function testTextValueObjectExpectExceptionBecauseNotClean() {
@@ -66,7 +66,7 @@ class TextTest extends TestCase {
 	 * @throws BindMismatchException
 	 */
 	function testUnmarshalValFail(): void {
-		$result = Bind::values(str_repeat('s', 5001))
+		$result = Bind::values(str_repeat('s', 5501))
 				->map(Mappers::unmarshal(Text::class))
 				->toValue()
 				->exec();
@@ -74,7 +74,7 @@ class TextTest extends TestCase {
 		$this->assertFalse($result->isValid());
 		$errorMap = $result->getErrorMap();
 		$this->assertTrue(assert($errorMap instanceof ErrorMap));
-		$this->assertEquals('Maxlength [maxlength = 5000]', (string) $errorMap->getAllMessages()[0]);
+		$this->assertEquals('Maxlength [maxlength = 5500]', (string) $errorMap->getAllMessages()[0]);
 	}
 
 
