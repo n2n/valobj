@@ -10,6 +10,4 @@ class MediumLabel extends CleanString {
 	 * @throws IllegalValueException if passed value is invalid.
 	 */
 	const MAX_LENGTH = 127;
-	const MIN_LENGTH = 1;
-	const SIMPLE_WHITESPACES_ONLY = true;
 }

@@ -9,6 +9,7 @@ use n2n\bind\attribute\impl\Marshal;
 use n2n\bind\mapper\Mapper;
 use n2n\bind\mapper\impl\Mappers;
 use n2n\bind\attribute\impl\Unmarshal;
+use n2n\util\ex\err\ConfigurationError;
 
 /**
  * Usually not used by its own but as super type of ever other String value object.
@@ -21,6 +22,7 @@ class CleanString extends StringValueObjectAdapter {
 	const MIN_LENGTH = 1;
 	const MAX_LENGTH = 255;
 	const SIMPLE_WHITESPACES_ONLY = true;
+
 	/**
 	 * @param string $value that is clean according to {@link StringUtils::isClean} with param static::SIMPLE_WHITESPACES_ONLY
 	 * and between static::MIN_LENGTH and static::MAX_LENGTH chars long, static::MIN_LENGTH has to be > 0
@@ -28,6 +30,11 @@ class CleanString extends StringValueObjectAdapter {
 	 */
 	public final function __construct(string $value) {
 		parent::__construct($value);
+
+		if (self::MIN_LENGTH < 1) {
+			throw new ConfigurationError('Illegal MIN_LENGTH constant defined in ' . static::class
+					. '. Value must be at least 1.');
+		}
 
 		IllegalValueException::assertTrue(ValidationUtils::maxlength($this->value, static::MAX_LENGTH),
 				'Value too long: ' . $this->value);
@@ -46,7 +53,8 @@ class CleanString extends StringValueObjectAdapter {
 	static function unmarshalMapper(): Mapper {
 		$class = new \ReflectionClass(static::class);
 		return Mappers::pipe(
-				Mappers::cleanString(minlength: static::MIN_LENGTH, maxlength: static::MAX_LENGTH, simpleWhitespacesOnly: static::SIMPLE_WHITESPACES_ONLY),
+				Mappers::cleanString(minlength: static::MIN_LENGTH, maxlength: static::MAX_LENGTH,
+						simpleWhitespacesOnly: static::SIMPLE_WHITESPACES_ONLY),
 				Mappers::valueIfNotNull(fn(string $value) => $class->newInstance($value)));
 	}
 }

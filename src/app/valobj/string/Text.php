@@ -12,6 +12,5 @@ class Text extends CleanString {
 	 * @throws IllegalValueException if passed value is invalid.
 	 */
 	const MAX_LENGTH = 5500;
-	const MIN_LENGTH = 1;
 	const SIMPLE_WHITESPACES_ONLY = false;
 }

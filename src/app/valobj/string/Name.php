@@ -12,6 +12,4 @@ class Name extends CleanString {
 	 * @throws IllegalValueException if passed value is invalid.
 	 */
 	const MAX_LENGTH = 63;
-	const MIN_LENGTH = 1;
-	const SIMPLE_WHITESPACES_ONLY = true;
 }
