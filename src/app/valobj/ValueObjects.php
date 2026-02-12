@@ -8,7 +8,6 @@ use valobj\string\Name;
 use valobj\string\LongLabel;
 use valobj\string\Text;
 use valobj\int\NbId;
-use valobj\float\TypicalTwoDigitDecimal;
 use valobj\string\ColorHex;
 use valobj\string\ShortLabel;
 use valobj\int\PositiveInt;

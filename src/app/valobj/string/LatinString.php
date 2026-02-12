@@ -29,14 +29,14 @@ class LatinString extends StringValueObjectAdapter {
 
 	#[Marshal]
 	static function marshalMapper(): Mapper {
-		return Mappers::value(fn (LatinString $latinString) => $latinString->toScalar());
+		return Mappers::value(fn(LatinString $latinString) => $latinString->toScalar());
 	}
 
 	#[Unmarshal]
 	static function unmarshalMapper(): Mapper {
 		$class = new \ReflectionClass(static::class);
 		return Mappers::pipe(
-				Mappers::cleanString(minlength: static::MIN_LENGTH,maxlength: static::MAX_LENGTH, simpleWhitespacesOnly: true),
-				Mappers::valueIfNotNull(fn (string $value) => $class->newInstance($value)));
+				Mappers::cleanString(minlength: static::MIN_LENGTH, maxlength: static::MAX_LENGTH, simpleWhitespacesOnly: true),
+				Mappers::valueIfNotNull(fn(string $value) => $class->newInstance($value)));
 	}
 }

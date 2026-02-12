@@ -8,7 +8,15 @@ abstract class FloatValueObjectAdapter implements FloatValueObject, \Stringable,
 	function __construct(protected float $value) {
 	}
 
-	function equals(FloatValueObject $floatValueObject): bool {
+	function equals(FloatValueObject|float|null $floatValueObject): bool {
+		if ($floatValueObject === null) {
+			return false;
+		}
+
+		if (is_float($floatValueObject)) {
+			return $floatValueObject === $this->value;
+		}
+
 		return $this->toScalar() === $floatValueObject->toScalar();
 	}
 
