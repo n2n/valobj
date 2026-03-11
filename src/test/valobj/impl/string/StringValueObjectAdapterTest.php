@@ -13,6 +13,10 @@ use n2n\bind\err\UnresolvableBindableException;
 use n2n\validation\plan\ErrorMap;
 use valobj\string\Email;
 use valobj\string\Text;
+use valobj\string\CleanString;
+use n2n\util\uri\Url;
+use n2n\util\ex\IllegalStateException;
+use valobj\string\ShortLabel;
 
 class StringValueObjectAdapterTest extends TestCase {
 
@@ -31,5 +35,18 @@ class StringValueObjectAdapterTest extends TestCase {
 		$this->expectExceptionMessage('Empty string not allowed.');
 
 		new Text('');
+	}
+
+	/**
+	 * @throws IllegalValueException
+	 */
+	function testFrom() {
+		$this->assertEquals('holeradio@huii.ch', Email::from('holeradio@huii.ch'));
+		$this->assertEquals('https:://www.hnm.ch',
+				CleanString::from(Url::create('https:://www.hnm.ch')));
+		$this->assertNull(CleanString::from(null));
+
+		$this->expectException(IllegalStateException::class);
+		ShortLabel::from(str_repeat('a', ShortLabel::MAX_LENGTH + 1));
 	}
 }
