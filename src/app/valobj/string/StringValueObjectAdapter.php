@@ -37,7 +37,7 @@ abstract class StringValueObjectAdapter implements StringValueObject, \Stringabl
 		return $this->value;
 	}
 
-	static function from(?string $value): ?static {
+	static function from(string|\Stringable|null $value): ?static {
 		if ($value === null) {
 			return null;
 		}

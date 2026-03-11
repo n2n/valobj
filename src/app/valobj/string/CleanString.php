@@ -59,7 +59,7 @@ class CleanString extends StringValueObjectAdapter {
 				Mappers::valueIfNotNull(fn(string $value) => $class->newInstance($value)));
 	}
 
-	static function fromTruncate(?string $value): ?static {
+	static function fromTruncate(string|\Stringable|null $value): ?static {
 		if ($value === null) {
 			return null;
 		}
