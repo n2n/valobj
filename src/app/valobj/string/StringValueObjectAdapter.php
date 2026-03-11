@@ -5,6 +5,7 @@ namespace valobj\string;
 use n2n\spec\valobj\scalar\StringValueObject;
 use n2n\spec\valobj\err\IllegalValueException;
 use n2n\validation\validator\impl\ValidationUtils;
+use n2n\util\ex\ExUtils;
 
 abstract class StringValueObjectAdapter implements StringValueObject, \Stringable, \JsonSerializable {
 
@@ -34,5 +35,13 @@ abstract class StringValueObjectAdapter implements StringValueObject, \Stringabl
 
 	function toScalar(): string {
 		return $this->value;
+	}
+
+	static function from(?string $value): ?static {
+		if ($value === null) {
+			return null;
+		}
+
+		return ExUtils::try(fn () => new static($value));
 	}
 }

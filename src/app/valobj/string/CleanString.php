@@ -10,6 +10,7 @@ use n2n\bind\mapper\Mapper;
 use n2n\bind\mapper\impl\Mappers;
 use n2n\bind\attribute\impl\Unmarshal;
 use n2n\util\ex\err\ConfigurationError;
+use n2n\util\ex\ExUtils;
 
 /**
  * Usually not used by its own but as super type of ever other String value object.
@@ -56,5 +57,13 @@ class CleanString extends StringValueObjectAdapter {
 				Mappers::cleanString(minlength: static::MIN_LENGTH, maxlength: static::MAX_LENGTH,
 						simpleWhitespacesOnly: static::SIMPLE_WHITESPACES_ONLY),
 				Mappers::valueIfNotNull(fn(string $value) => $class->newInstance($value)));
+	}
+
+	static function fromTruncate(?string $value): ?static {
+		if ($value === null) {
+			return null;
+		}
+
+		return ExUtils::try(fn () => new static(StringUtils::reduce($value, static::MAX_LENGTH - 3, '...')));
 	}
 }
