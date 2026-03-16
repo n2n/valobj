@@ -3,6 +3,7 @@
 namespace valobj\int;
 
 use n2n\spec\valobj\scalar\IntValueObject;
+use n2n\util\ex\ExUtils;
 
 abstract class IntValueObjectAdapter implements IntValueObject, \Stringable, \JsonSerializable {
 
@@ -31,5 +32,13 @@ abstract class IntValueObjectAdapter implements IntValueObject, \Stringable, \Js
 
 	final function toScalar(): int {
 		return $this->value;
+	}
+
+	static function from(int|null $value): ?static {
+		if ($value === null) {
+			return null;
+		}
+
+		return ExUtils::try(fn () => new static($value));
 	}
 }
