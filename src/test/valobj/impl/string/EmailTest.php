@@ -12,6 +12,7 @@ use n2n\bind\err\BindMismatchException;
 use n2n\bind\err\UnresolvableBindableException;
 use n2n\validation\plan\ErrorMap;
 use valobj\string\Email;
+use n2n\util\ex\IllegalStateException;
 
 class EmailTest extends TestCase {
 
@@ -34,6 +35,15 @@ class EmailTest extends TestCase {
 	function testUppercase(): void {
 		$this->expectException(IllegalValueException::class);
 		new Email('hoLeradio@huii.ch');
+	}
+
+	function testLenientFrom(): void {
+		$this->assertEquals(new Email('holeradio@huii.ch'), Email::from('hoLeradio@huii.ch ', true));
+	}
+
+	function testNotLenientFrom(): void {
+		$this->expectException(IllegalStateException::class);
+		Email::from('hoLeradio@huii.ch ');
 	}
 
 	/**

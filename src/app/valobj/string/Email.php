@@ -18,6 +18,19 @@ class Email extends StringValueObjectAdapter {
 				'Illegal e-mail value: ' . $this->value);
 	}
 
+	static function from(string|\Stringable|null $value, bool $lenient = false): ?static {
+		if ($value === null) {
+			return null;
+		}
+
+		if (!$lenient) {
+			return parent::from($value);
+		}
+
+		return parent::from(mb_strtolower(trim((string) $value)));
+
+	}
+
 	#[Marshal]
 	static function marshalMapper(): Mapper {
 		return Mappers::valueClosure(fn (Email $email) => $email->toScalar());
