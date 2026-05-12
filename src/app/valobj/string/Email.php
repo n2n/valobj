@@ -31,6 +31,21 @@ class Email extends StringValueObjectAdapter {
 
 	}
 
+	/**
+	 * @throws IllegalValueException
+	 */
+	static function checkedFrom(string|\Stringable|null $value, bool $lenient = false): ?static {
+		if ($value === null) {
+			return null;
+		}
+
+		if ($lenient) {
+			$value = mb_strtolower(trim((string) $value));
+		}
+
+		return new static($value);
+	}
+
 	#[Marshal]
 	static function marshalMapper(): Mapper {
 		return Mappers::valueClosure(fn (Email $email) => $email->toScalar());
