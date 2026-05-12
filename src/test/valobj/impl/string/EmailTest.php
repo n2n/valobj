@@ -47,6 +47,18 @@ class EmailTest extends TestCase {
 	}
 
 	/**
+	 * @throws IllegalValueException
+	 */
+	function testLenientCheckedFrom(): void {
+		$this->assertEquals(new Email('holeradio@huii.ch'), Email::checkedFrom('hoLeradio@huii.ch ', true));
+	}
+
+	function testNotLenientCheckedFrom(): void {
+		$this->expectException(IllegalValueException::class);
+		Email::checkedFrom('hoLeradio@huii.ch ');
+	}
+
+	/**
 	 * @throws BindTargetException
 	 * @throws BindMismatchException
 	 * @throws UnresolvableBindableException
