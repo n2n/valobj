@@ -14,6 +14,7 @@ class CleanStringTest extends TestCase {
 	}
 
 	function testFromLenientFalse() {
+		$this->assertNull(CleanString::from(null));
 		$this->assertEquals('This is a test string', CleanString::from('This is a test string'));
 	}
 
