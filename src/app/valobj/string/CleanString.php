@@ -66,4 +66,15 @@ class CleanString extends StringValueObjectAdapter {
 
 		return ExUtils::try(fn () => new static(StringUtils::reduce($value, static::MAX_LENGTH - 3, '...')));
 	}
+
+	static function from(string|\Stringable|null $value, bool $lenient = false): ?static {
+		if ($value === null) {
+			return null;
+		}
+		if (!$lenient) {
+			return parent::from($value);
+		}
+		return parent::from(StringUtils::clean(trim((string) $value), static::SIMPLE_WHITESPACES_ONLY));
+
+	}
 }
