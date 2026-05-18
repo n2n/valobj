@@ -13,7 +13,7 @@ class CleanStringTest extends TestCase {
 			 . '...', CleanString::fromTruncate(str_repeat('a', CleanString::MAX_LENGTH + 1)));
 	}
 
-	function testFrom() {
+	function testFromLenientFalse() {
 		$this->assertEquals('This is a test string', CleanString::from('This is a test string'));
 	}
 
