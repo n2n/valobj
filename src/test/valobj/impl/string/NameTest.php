@@ -30,7 +30,7 @@ class NameTest extends TestCase {
 	function testConstructExceptionBecauseToLong(): void {
 		$this->expectException(IllegalStateException::class);
 		//an arabic name that is way too long, because it includes father, grandfather and epithet
-		ValueObjects::name('Hadschi Rafiq Tariq Ben Hadschi Nabil Kamal Ibn Hadschi Faris al Farouk');
+		ValueObjects::name('Hadschi Rafiq Tariq Ben Hadschi Nabil Kamal Ibn Hadschi Faris al Farouk Timo Timo');
 	}
 
 	function testNameValueObjectExpectExceptionBecauseNotClean() {
@@ -70,7 +70,7 @@ class NameTest extends TestCase {
 	 * @throws BindMismatchException
 	 */
 	function testUnmarshalValFail(): void {
-		$result = Bind::values('Hadschi Rafiq Tariq Ben Hadschi Nabil Kamal Ibn Hadschi Faris al Farouk')
+		$result = Bind::values('Hadschi Rafiq Tariq Ben Hadschi Nabil Kamal Ibn Hadschi Faris al Farouk Timo Timo')
 				->map(Mappers::unmarshal(Name::class))
 				->toValue()
 				->exec();
@@ -78,7 +78,7 @@ class NameTest extends TestCase {
 		$this->assertFalse($result->isValid());
 		$errorMap = $result->getErrorMap();
 		$this->assertTrue(assert($errorMap instanceof ErrorMap));
-		$this->assertEquals('Maxlength [maxlength = 63]', (string) $errorMap->getAllMessages()[0]);
+		$this->assertEquals('Maxlength [maxlength = 80]', (string) $errorMap->getAllMessages()[0]);
 	}
 
 

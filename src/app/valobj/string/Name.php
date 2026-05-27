@@ -7,9 +7,5 @@ use n2n\spec\valobj\err\IllegalValueException;
 
 class Name extends CleanString {
 
-	/**
-	 * @param string $value that is clean according to {@link StringUtils::isClean} and max 63 chars long
-	 * @throws IllegalValueException if passed value is invalid.
-	 */
-	const MAX_LENGTH = 63;
+	const MAX_LENGTH = 80;
 }
