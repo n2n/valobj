@@ -55,7 +55,7 @@ class EnvEncryptedSecret extends StringValueObjectAdapter {
 				Mappers::valueIfNotNull(fn(string $value) => static::encrypt(PlainSecret::fromString($value))));
 	}
 
-	function reveal(): PlainSecret {
+	function toPlainSecret(): PlainSecret {
 		return $this->plainSecret;
 	}
 
