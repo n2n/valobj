@@ -22,7 +22,7 @@ class EnvEncryptedSecret extends StringValueObjectAdapter {
 
 	private PlainSecret $plainSecret;
 
-	function __construct(string $value) {
+	final function __construct(string $value) {
 		parent::__construct($value);
 
 		try {
@@ -35,9 +35,13 @@ class EnvEncryptedSecret extends StringValueObjectAdapter {
 	/**
 	 * @throws IllegalValueException
 	 */
-	static function encrypt(PlainSecret $plainSecret): static {
+	static function fromUnencrypted(PlainSecret|string|null $plainSecret): static|null {
+		if ($plainSecret === null) {
+			return null;
+		}
+
 		try {
-			return new static(SymmetricCryptUtils::encrypt($plainSecret, static::readKey())->toJson());
+			return new static(SymmetricCryptUtils::encrypt(PlainSecret::from($plainSecret), static::readKey())->toJson());
 		} catch (EncryptionFailedException $e) {
 			throw new IllegalValueException('Could not encrypt secret.', previous: $e);
 		}
@@ -49,10 +53,12 @@ class EnvEncryptedSecret extends StringValueObjectAdapter {
 	}
 
 	static function encryptMapper(): Mapper {
+		$class = new \ReflectionClass(static::class);
 		return Mappers::pipe(
 				Mappers::type(TypeConstraints::string(true)),
 				Validators::minlength(1),
-				Mappers::valueIfNotNull(fn(string $value) => static::encrypt(PlainSecret::fromString($value))));
+				Mappers::valueIfNotNull(fn(string $value) => $class
+						->newInstance(SymmetricCryptUtils::encrypt(PlainSecret::from($value), static::readKey())->toJson())));
 	}
 
 	function toPlainSecret(): PlainSecret {
@@ -65,7 +71,8 @@ class EnvEncryptedSecret extends StringValueObjectAdapter {
 	private static function readKey(): string {
 		$key = getenv(static::KEY_ENVIRONMENT_VARIABLE_NAME);
 		if (!is_string($key)) {
-			throw new ConfigurationError('env var not set: ' . static::KEY_ENVIRONMENT_VARIABLE_NAME, __FILE__, __LINE__);
+			throw new ConfigurationError('Env var for ' . static::class . ' not set: '
+					. static::KEY_ENVIRONMENT_VARIABLE_NAME);
 		}
 
 		return $key;
