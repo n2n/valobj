@@ -49,4 +49,17 @@ class StringValueObjectAdapterTest extends TestCase {
 		$this->expectException(IllegalStateException::class);
 		ShortLabel::from(str_repeat('a', ShortLabel::MAX_LENGTH + 1));
 	}
+
+	/**
+	 * @throws IllegalValueException
+	 */
+	function testCheckedFrom() {
+		$this->assertEquals('holeradio@huii.ch', Email::checkedFrom('holeradio@huii.ch'));
+		$this->assertEquals('https:://www.hnm.ch',
+				CleanString::checkedFrom(Url::create('https:://www.hnm.ch')));
+		$this->assertNull(CleanString::checkedFrom(null));
+
+		$this->expectException(IllegalValueException::class);
+		ShortLabel::checkedFrom(str_repeat('a', ShortLabel::MAX_LENGTH + 1));
+	}
 }

@@ -38,10 +38,17 @@ abstract class StringValueObjectAdapter implements StringValueObject, \Stringabl
 	}
 
 	static function from(string|\Stringable|null $value): ?static {
+		return ExUtils::try(fn () => self::checkedFrom($value));
+	}
+
+	/**
+	 * @throws IllegalValueException
+	 */
+	static function checkedFrom(string|\Stringable|null $value): ?static {
 		if ($value === null) {
 			return null;
 		}
 
-		return ExUtils::try(fn () => new static($value));
+		return new static($value);
 	}
 }
