@@ -19,25 +19,6 @@ use n2n\validation\validator\impl\Validators;
  * @extends TypedArray<K, V>
  */
 #[ValueType(StringValueObject::class)]
-abstract class StringValueObjectArrayAdapter extends TypedArray {
+abstract class StringValueObjectArrayAdapter extends NullableStringValueObjectArrayAdapter {
 
-	#[Marshal]
-	static function marshalMapper(): Mapper {
-		return Mappers::value(fn (StringValueObjectArrayAdapter $strings) => array_map(
-				fn (StringValueObject $string) => $string->toScalar(),
-				$strings->toArray()));
-	}
-
-	#[Unmarshal]
-	static function unmarshalMapper(): Mapper {
-		$class = new \ReflectionClass(static::class);
-		$namedTypeConstraint = CollectionTypeUtils::detectValueTypeConstraint(new ReflectionClass(static::class));
-
-		return Mappers::pipe(
-				Mappers::subForeach(
-						Mappers::unmarshal($namedTypeConstraint->getTypeName()),
-						Validators::mandatoryIf(!$namedTypeConstraint->allowsNull())),
-				Mappers::subMerge(),
-				Mappers::value(fn (array $stringValueObjects) => $class->newInstance($stringValueObjects)));
-	}
 }
