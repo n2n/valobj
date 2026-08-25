@@ -9,6 +9,8 @@ use n2n\bind\attribute\impl\Unmarshal;
 use n2n\validation\validator\impl\ValidationUtils;
 use n2n\spec\valobj\err\IllegalValueException;
 use n2n\bind\mapper\impl\string\PhoneMapper;
+use n2n\util\type\ArgUtils;
+use n2n\util\ex\ExUtils;
 
 class Phone extends StringValueObjectAdapter {
 
@@ -20,15 +22,19 @@ class Phone extends StringValueObjectAdapter {
 	}
 
 	static function from(string|\Stringable|null $value, bool $lenient = false): ?static {
+		return ExUtils::try(fn () => self::checkedFrom($value, $lenient));
+	}
+
+	static function checkedFrom(string|\Stringable|null $value, bool $lenient = false): ?static {
 		if ($value === null) {
 			return null;
 		}
 
 		if (!$lenient) {
-			return parent::from($value);
+			return parent::checkedFrom($value, false);
 		}
 
-		return parent::from(PhoneMapper::normalizeStr($value));
+		return parent::checkedFrom(PhoneMapper::normalizeStr($value), true);
 	}
 
 	public function toTel(): ?string {

@@ -62,4 +62,22 @@ class StringValueObjectAdapterTest extends TestCase {
 		$this->expectException(IllegalValueException::class);
 		ShortLabel::checkedFrom(str_repeat('a', ShortLabel::MAX_LENGTH + 1));
 	}
+
+	/**
+	 * @throws IllegalValueException
+	 */
+	function testLenientFromEmptyString(): void {
+		$this->assertNull(CleanString::from('', true));
+		$this->assertNull(CleanString::checkedFrom('', true));
+
+		try {
+			$this->assertNull(CleanString::from('', false));
+			$this->fail(IllegalStateException::class . ' expected');
+		} catch (IllegalStateException $e) {}
+
+		try {
+			$this->assertNull(CleanString::checkedFrom('', false));
+			$this->fail(IllegalValueException::class . ' expected');
+		} catch (IllegalValueException $e) {}
+	}
 }

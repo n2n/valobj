@@ -74,7 +74,9 @@ class CleanString extends StringValueObjectAdapter {
 		if (!$lenient) {
 			return parent::from($value);
 		}
-		return parent::from(StringUtils::clean(trim((string) $value), static::SIMPLE_WHITESPACES_ONLY));
+		return parent::from(
+				StringUtils::clean(trim((string) $value), static::SIMPLE_WHITESPACES_ONLY),
+				true);
 
 	}
 }

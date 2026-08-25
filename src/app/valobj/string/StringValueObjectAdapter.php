@@ -37,15 +37,15 @@ abstract class StringValueObjectAdapter implements StringValueObject, \Stringabl
 		return $this->value;
 	}
 
-	static function from(string|\Stringable|null $value): ?static {
-		return ExUtils::try(fn () => self::checkedFrom($value));
+	static function from(string|\Stringable|null $value, bool $lenient = false): ?static {
+		return ExUtils::try(fn () => self::checkedFrom($value, $lenient));
 	}
 
 	/**
 	 * @throws IllegalValueException
 	 */
-	static function checkedFrom(string|\Stringable|null $value): ?static {
-		if ($value === null) {
+	static function checkedFrom(string|\Stringable|null $value, bool $lenient = false): ?static {
+		if ($value === null || ($value === '' && $lenient)) {
 			return null;
 		}
 
