@@ -10,7 +10,7 @@ use n2n\validation\validator\impl\ValidationUtils;
 use n2n\spec\valobj\err\IllegalValueException;
 use n2n\util\ex\ExUtils;
 
-class Email extends StringValueObjectAdapter {
+final class Email extends StringValueObjectAdapter {
 
 	public function __construct(string $value) {
 		parent::__construct($value);

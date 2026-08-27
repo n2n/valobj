@@ -5,6 +5,9 @@ namespace valobj\string;
 use n2n\util\StringUtils;
 use n2n\spec\valobj\err\IllegalValueException;
 
+/**
+ * @deprecated
+ */
 class ShortLabel extends CleanString {
 
 	/**

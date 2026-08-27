@@ -4,6 +4,9 @@ namespace valobj\string;
 use n2n\spec\valobj\err\IllegalValueException;
 use n2n\util\StringUtils;
 
+/**
+ * @deprecated
+ */
 class MediumLabel extends CleanString {
 	/**
 	 * @param string $value that is clean according to {@link StringUtils::isClean} and max 127 chars long

@@ -9,7 +9,7 @@ use n2n\bind\attribute\impl\Unmarshal;
 use n2n\validation\validator\impl\ValidationUtils;
 use n2n\spec\valobj\err\IllegalValueException;
 
-class ColorHex extends StringValueObjectAdapter {
+final class ColorHex extends StringValueObjectAdapter {
 
 	public function __construct(string $value) {
 		parent::__construct($value);
