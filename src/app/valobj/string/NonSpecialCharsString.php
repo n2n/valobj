@@ -11,19 +11,18 @@ use n2n\bind\mapper\Mapper;
 use n2n\bind\mapper\impl\Mappers;
 use n2n\bind\attribute\impl\Unmarshal;
 use n2n\util\ex\err\ConfigurationError;
-use n2n\util\ex\ExUtils;
 
 /**
- * Usually not used by its own but as super type of ever other String value object.
- * any Sub can extend CleanString and simply override the const, and it will use the constructor and mappers below
+ * Usually not used by its own but as super type for example PathParts String value object.
+ * any Sub can extend NonSpecialCharsString and simply override the const, and it will use the constructor and mappers below
  * with either default params, or the given in that subclass
- * so for a label that allow only 16 Chars, simply set const MAX_LENGTH = 16;
+ * so for a path Part that allow only 16 Chars, simply set const MAX_LENGTH = 16;
  */
 class NonSpecialCharsString extends StringValueObjectAdapter {
 
-	const MIN_LENGTH = 1;
-	const MAX_LENGTH = 255;
-    const LOWER_CASE_ONLY = true;
+	const MIN_LENGTH = 3;
+	const MAX_LENGTH = 63;
+	const LOWER_CASE_ONLY = true;
 
 	/**
 	 * @param string $value
@@ -44,7 +43,24 @@ class NonSpecialCharsString extends StringValueObjectAdapter {
 				'Value too short: ' . $this->value);
 		IllegalValueException::assertTrue(!IoUtils::hasSpecialChars($value),
 				'Value contains special chars: ' . $this->value);
+		if (static::LOWER_CASE_ONLY) {
+			IllegalValueException::assertTrue(ValidationUtils::isLowerCaseOnly($this->value),
+					'Value not lowercase: ' . $this->value);
+		}
 	}
 
-	// TODO: David
+	#[Marshal]
+	static function marshalMapper(): Mapper {
+		return Mappers::value(fn(NonSpecialCharsString $nonSpecialCharsString) => $nonSpecialCharsString->toScalar());
+	}
+
+	#[Unmarshal]
+	static function unmarshalMapper(): Mapper {
+		$class = new \ReflectionClass(static::class);
+
+		return Mappers::pipe(
+				Mappers::noSpecialChars(false, static::LOWER_CASE_ONLY,
+						minlength: static::MIN_LENGTH, maxlength: static::MAX_LENGTH),
+				Mappers::valueIfNotNull(fn(string $value) => $class->newInstance($value)));
+	}
 }
