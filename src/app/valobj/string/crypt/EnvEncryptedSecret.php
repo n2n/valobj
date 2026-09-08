@@ -15,12 +15,13 @@ use n2n\util\crypt\ex\DecryptionFailedException;
 use n2n\util\crypt\ex\EncryptionFailedException;
 use n2n\util\ex\err\ConfigurationError;
 use n2n\validation\validator\impl\Validators;
+use n2n\util\ex\ExUtils;
 
 class EnvEncryptedSecret extends StringValueObjectAdapter {
 
 	const KEY_ENVIRONMENT_VARIABLE_NAME = 'SECRET_ENCRYPTION_KEY';
 
-	private PlainSecret $plainSecret;
+	private readonly PlainSecret $plainSecret;
 
 	final function __construct(string $value) {
 		parent::__construct($value);
@@ -35,16 +36,24 @@ class EnvEncryptedSecret extends StringValueObjectAdapter {
 	/**
 	 * @throws IllegalValueException
 	 */
-	static function fromUnencrypted(PlainSecret|string|null $plainSecret): static|null {
+	static function checkedFromUnencrypted(PlainSecret|string|null $plainSecret): static|null {
 		if ($plainSecret === null) {
 			return null;
 		}
 
+		if (is_string($plainSecret)) {
+			$plainSecret = new PlainSecret($plainSecret);
+		}
+
 		try {
-			return new static(SymmetricCryptUtils::encrypt(PlainSecret::from($plainSecret), static::readKey())->toJson());
+			return new static(SymmetricCryptUtils::encrypt($plainSecret, static::readKey())->toJson());
 		} catch (EncryptionFailedException $e) {
 			throw new IllegalValueException('Could not encrypt secret.', previous: $e);
 		}
+	}
+
+	static function fromUnencrypted(PlainSecret|string|null $plainSecret): static|null {
+		return ExUtils::try(fn () => static::checkedFromUnencrypted($plainSecret));
 	}
 
 	#[Unmarshal]
@@ -53,12 +62,11 @@ class EnvEncryptedSecret extends StringValueObjectAdapter {
 	}
 
 	static function encryptMapper(): Mapper {
-		$class = new \ReflectionClass(static::class);
+		$class = static::class;
 		return Mappers::pipe(
 				Mappers::type(TypeConstraints::string(true)),
 				Validators::minlength(1),
-				Mappers::valueIfNotNull(fn(string $value) => $class
-						->newInstance(SymmetricCryptUtils::encrypt(PlainSecret::from($value), static::readKey())->toJson())));
+				Mappers::valueIfNotNull(fn(string $value) => $class::checkedFromUnencrypted($value)));
 	}
 
 	function toPlainSecret(): PlainSecret {
