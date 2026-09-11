@@ -55,13 +55,14 @@ class PasswordHash extends StringValueObjectAdapter {
 	}
 
 	static function from(string|\Stringable|null $value, bool $lenient = false): ?static {
+		return ExUtils::try(fn () => self::checkedFrom($value, $lenient));
+	}
+
+	static function checkedFrom(string|\Stringable|null $value, bool $lenient = false): null|static {
 		if ($value === null) {
 			return null;
 		}
-		$class = new \ReflectionClass(static::class);
-
-		return ExUtils::try(fn () => $class->newInstance(HashUtils::hashPassword((string) $value)));
-
+		return parent::checkedFrom(HashUtils::hashPassword((string) $value), $lenient);
 	}
 
 	public static function verifyPassword(string $rawPassword, ?string $hashedPassword): bool {
