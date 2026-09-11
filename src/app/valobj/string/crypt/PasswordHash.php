@@ -18,7 +18,7 @@ class PasswordHash extends StringValueObjectAdapter {
 	public final function __construct(string $value) {
 		parent::__construct($value);
 
-		if ($this->matchesPassword('')) {
+		if ($this->verify('')) {
 			throw new IllegalValueException('Hash must not be of empty string.');
 		}
 	}
@@ -52,7 +52,7 @@ class PasswordHash extends StringValueObjectAdapter {
 	}
 
 
-	function matchesPassword(string $password): bool {
+	function verify(string $password): bool {
 		return  HashUtils::verifyPassword($password, $this->value);
 	}
 }

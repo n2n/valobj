@@ -19,16 +19,16 @@ class PasswordHashTest extends TestCase {
 	function testConstruct(): void {
 		$rawPassword = 'Testerich';
 		$passwordHash = PasswordHash::fromPassword($rawPassword);
-		$this->assertTrue($passwordHash->matchesPassword($rawPassword));
+		$this->assertTrue($passwordHash->verify($rawPassword));
 
 		//as long only visible chars are used (and maybe spaces between) almost anything is possible even emojis
 		$rawPassword = '🔧N2N-Works🔧';
 		$passwordHash = PasswordHash::fromPassword($rawPassword);
-		$this->assertTrue($passwordHash->matchesPassword($rawPassword));
+		$this->assertTrue($passwordHash->verify($rawPassword));
 
 		$rawPassword = ' ​äüö‍‍‍àéè+‌"*ç%‎‏&/';
 		$passwordHash = PasswordHash::fromPassword($rawPassword);
-		$this->assertTrue($passwordHash->matchesPassword($rawPassword));
+		$this->assertTrue($passwordHash->verify($rawPassword));
 	}
 
 	/**
@@ -38,8 +38,8 @@ class PasswordHashTest extends TestCase {
 		$rawPassword = 'Testerich';
 		$passwordHash = PasswordHash::fromPassword($rawPassword);
 		$passwordHash2 = new PasswordHash($passwordHash);
-		$this->assertTrue($passwordHash->matchesPassword($rawPassword));
-		$this->assertTrue($passwordHash2->matchesPassword($rawPassword));
+		$this->assertTrue($passwordHash->verify($rawPassword));
+		$this->assertTrue($passwordHash2->verify($rawPassword));
 	}
 
 	/**
@@ -102,7 +102,7 @@ class PasswordHashTest extends TestCase {
 
 		$hashedPassword = $result->get();
 		$this->assertInstanceOf(SubPasswordHash::class, $hashedPassword);
-		$this->assertTrue($hashedPassword->matchesPassword('very-short'));
+		$this->assertTrue($hashedPassword->verify('very-short'));
 
 	}
 }
