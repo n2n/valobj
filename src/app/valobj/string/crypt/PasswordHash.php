@@ -12,17 +12,14 @@ use n2n\validation\validator\impl\Validators;
 use valobj\string\StringValueObjectAdapter;
 use n2n\util\ex\err\ConfigurationError;
 use n2n\spec\valobj\err\IllegalValueException;
-use n2n\validation\validator\impl\ValidationUtils;
 
 class PasswordHash extends StringValueObjectAdapter {
-	const MIN_LENGTH = 1;
 
 	public final function __construct(string $value) {
 		parent::__construct($value);
 
-		if (static::MIN_LENGTH < 1) {
-			throw new ConfigurationError('Illegal MIN_LENGTH constant defined in ' . static::class
-					. '. Value must be at least 1.');
+		if ($this->matchesPassword('')) {
+			throw new IllegalValueException('Hash must not be of empty string.');
 		}
 	}
 
@@ -31,7 +28,7 @@ class PasswordHash extends StringValueObjectAdapter {
 	static function unmarshalMapper(): Mapper {
 		$class = new \ReflectionClass(static::class);
 		return Mappers::pipe(
-				Validators::minlength(minlength: static::MIN_LENGTH),
+				Validators::minlength(minlength: 1),
 				Mappers::valueIfNotNull(fn(string $value) => $class->newInstance(HashUtils::hashPassword($value))));
 	}
 
