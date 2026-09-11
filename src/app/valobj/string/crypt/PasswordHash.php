@@ -19,20 +19,12 @@ class PasswordHash extends StringValueObjectAdapter {
 	const MAX_LENGTH = 63;
 	const MAX_HASH_LENGTH = 255;
 
-	public final function __construct(string $value, $raw = false) {
+	public final function __construct(string $value) {
 		parent::__construct($value);
 
 		if (static::MIN_LENGTH < 1) {
 			throw new ConfigurationError('Illegal MIN_LENGTH constant defined in ' . static::class
 					. '. Value must be at least 1.');
-		}
-
-		if ($raw === true) {
-			IllegalValueException::assertTrue(ValidationUtils::maxlength($this->value, static::MAX_LENGTH),
-					'Raw Password Value too long: ' . $this->value . ' max length = ' . static::MAX_LENGTH);
-			IllegalValueException::assertTrue(ValidationUtils::minlength($this->value, static::MIN_LENGTH),
-					'Raw Password Value too short: ' . $this->value . ' min length = ' . static::MIN_LENGTH);
-			$this->value = HashUtils::hashPassword($value);
 		}
 
 		IllegalValueException::assertTrue(ValidationUtils::maxlength($this->value, static::MAX_HASH_LENGTH),
@@ -54,18 +46,25 @@ class PasswordHash extends StringValueObjectAdapter {
 		return Mappers::value(fn(PasswordHash $passwordHash) => $passwordHash->toScalar());
 	}
 
-	static function from(string|\Stringable|null $value, bool $lenient = false): ?static {
-		return ExUtils::try(fn () => self::checkedFrom($value, $lenient));
+	static function fromPassword(string|\Stringable|null $value, bool $lenient = false): ?static {
+		return ExUtils::try(fn () => self::checkedFromPassword($value, $lenient));
 	}
 
-	static function checkedFrom(string|\Stringable|null $value, bool $lenient = false): null|static {
+	/**
+	 * @throws IllegalValueException
+	 */
+	static function checkedFromPassword(string|\Stringable|null $value, bool $lenient = false): null|static {
 		if ($value === null) {
 			return null;
 		}
 		return parent::checkedFrom(HashUtils::hashPassword((string) $value), $lenient);
 	}
 
-	public static function verifyPassword(string $rawPassword, ?string $hashedPassword): bool {
-		return  $hashedPassword !== null && HashUtils::verifyPassword($rawPassword, $hashedPassword);
+//	public static function verifyPassword(string $rawPassword, ?string $hashedPassword): bool {
+//		return  $hashedPassword !== null && HashUtils::verifyPassword($rawPassword, $hashedPassword);
+//	}
+
+	function matchesPassword(string $password): bool {
+		return  HashUtils::verifyPassword($password, $this->value);
 	}
 }

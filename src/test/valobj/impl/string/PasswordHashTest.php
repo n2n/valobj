@@ -18,17 +18,17 @@ class PasswordHashTest extends TestCase {
 
 	function testConstruct(): void {
 		$rawPassword = 'Testerich';
-		$passwordHash = PasswordHash::from($rawPassword);
-		$this->assertTrue(PasswordHash::verifyPassword($rawPassword, $passwordHash));
+		$passwordHash = PasswordHash::fromPassword($rawPassword);
+		$this->assertTrue($passwordHash->matchesPassword($rawPassword));
 
 		//as long only visible chars are used (and maybe spaces between) almost anything is possible even emojis
 		$rawPassword = '🔧N2N-Works🔧';
-		$passwordHash = PasswordHash::from($rawPassword);
-		$this->assertTrue(PasswordHash::verifyPassword($rawPassword, $passwordHash));
+		$passwordHash = PasswordHash::fromPassword($rawPassword);
+		$this->assertTrue($passwordHash->matchesPassword($rawPassword));
 
 		$rawPassword = ' ​äüö‍‍‍àéè+‌"*ç%‎‏&/';
-		$passwordHash = PasswordHash::from($rawPassword);
-		$this->assertTrue(PasswordHash::verifyPassword($rawPassword, $passwordHash));
+		$passwordHash = PasswordHash::fromPassword($rawPassword);
+		$this->assertTrue($passwordHash->matchesPassword($rawPassword));
 	}
 
 	/**
@@ -36,12 +36,12 @@ class PasswordHashTest extends TestCase {
 	 */
 	function testHashPassword(): void {
 		$rawPassword = 'Testerich';
-		$passwordHash = PasswordHash::from($rawPassword);
+		$passwordHash = PasswordHash::fromPassword($rawPassword);
 		$passwordHash2 = new PasswordHash($passwordHash, false);
 		$passwordHash3 = new PasswordHash($rawPassword, true);
-		$this->assertTrue(PasswordHash::verifyPassword($rawPassword, $passwordHash));
-		$this->assertTrue(PasswordHash::verifyPassword($rawPassword, $passwordHash2));
-		$this->assertTrue(PasswordHash::verifyPassword($rawPassword, $passwordHash3));
+		$this->assertTrue($passwordHash->matchesPassword($rawPassword));
+		$this->assertTrue($passwordHash2->matchesPassword($rawPassword));
+		$this->assertTrue($passwordHash3->matchesPassword($rawPassword));
 	}
 
 	/**
