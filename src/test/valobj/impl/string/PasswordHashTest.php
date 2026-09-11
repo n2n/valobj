@@ -37,29 +37,9 @@ class PasswordHashTest extends TestCase {
 	function testHashPassword(): void {
 		$rawPassword = 'Testerich';
 		$passwordHash = PasswordHash::fromPassword($rawPassword);
-		$passwordHash2 = new PasswordHash($passwordHash, false);
-		$passwordHash3 = new PasswordHash($rawPassword, true);
+		$passwordHash2 = new PasswordHash($passwordHash);
 		$this->assertTrue($passwordHash->matchesPassword($rawPassword));
 		$this->assertTrue($passwordHash2->matchesPassword($rawPassword));
-		$this->assertTrue($passwordHash3->matchesPassword($rawPassword));
-	}
-
-	/**
-	 * @throws IllegalValueException
-	 */
-	function testConstructExceptionBecauseToLong(): void {
-		$this->expectException(IllegalValueException::class);
-		$this->expectExceptionMessage('Value too long:');
-		new PasswordHash(str_repeat('s', 64), true);
-	}
-
-	/**
-	 * @throws IllegalValueException
-	 */
-	function testConstructLengthOnlyApplyForRaw(): void {
-		$this->expectException(IllegalValueException::class);
-		$this->expectExceptionMessage('Hash is too long:');
-		new PasswordHash(str_repeat('s', 256), false);
 	}
 
 	/**
@@ -73,25 +53,9 @@ class PasswordHashTest extends TestCase {
 				->toValue()
 				->exec();
 
-		$this->assertTrue(PasswordHash::verifyPassword('Testerich', $result->get()[0]));
+		$passwordHash = $result->get()[0];
+		$this->assertTrue($passwordHash->matchesPassword('Testerich'));
 		$this->assertNull($result->get()[1]);
-	}
-
-	/**
-	 * @throws BindTargetException
-	 * @throws UnresolvableBindableException
-	 * @throws BindMismatchException
-	 */
-	function testUnmarshalValFailMaxLength(): void {
-		$result = Bind::values(str_repeat('s', 256))
-				->map(Mappers::unmarshal(PasswordHash::class))
-				->toValue()
-				->exec();
-
-		$this->assertFalse($result->isValid());
-		$errorMap = $result->getErrorMap();
-		$this->assertTrue(assert($errorMap instanceof ErrorMap));
-		$this->assertEquals('Maxlength [maxlength = 63]', (string) $errorMap->getAllMessages()[0]);
 	}
 
 	/**
@@ -110,7 +74,6 @@ class PasswordHashTest extends TestCase {
 		$this->assertTrue(assert($errorMap instanceof ErrorMap));
 		$this->assertEquals('Minlength [minlength = 1]', (string) $errorMap->getAllMessages()[0]);
 	}
-
 
 	/**
 	 * @throws BindTargetException
@@ -139,7 +102,7 @@ class PasswordHashTest extends TestCase {
 
 		$hashedPassword = $result->get();
 		$this->assertInstanceOf(SubPasswordHash::class, $hashedPassword);
-		$this->assertTrue(PasswordHash::verifyPassword('very-short', $hashedPassword));
+		$this->assertTrue($hashedPassword->matchesPassword('very-short'));
 
 	}
 }

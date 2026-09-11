@@ -16,8 +16,6 @@ use n2n\validation\validator\impl\ValidationUtils;
 
 class PasswordHash extends StringValueObjectAdapter {
 	const MIN_LENGTH = 1;
-	const MAX_LENGTH = 63;
-	const MAX_HASH_LENGTH = 255;
 
 	public final function __construct(string $value) {
 		parent::__construct($value);
@@ -26,9 +24,6 @@ class PasswordHash extends StringValueObjectAdapter {
 			throw new ConfigurationError('Illegal MIN_LENGTH constant defined in ' . static::class
 					. '. Value must be at least 1.');
 		}
-
-		IllegalValueException::assertTrue(ValidationUtils::maxlength($this->value, static::MAX_HASH_LENGTH),
-				'Hash is too long: ' . $this->value);
 	}
 
 
@@ -37,7 +32,6 @@ class PasswordHash extends StringValueObjectAdapter {
 		$class = new \ReflectionClass(static::class);
 		return Mappers::pipe(
 				Validators::minlength(minlength: static::MIN_LENGTH),
-				Validators::maxlength(maxlength: static::MAX_LENGTH),
 				Mappers::valueIfNotNull(fn(string $value) => $class->newInstance(HashUtils::hashPassword($value))));
 	}
 
@@ -60,9 +54,6 @@ class PasswordHash extends StringValueObjectAdapter {
 		return parent::checkedFrom(HashUtils::hashPassword((string) $value), $lenient);
 	}
 
-//	public static function verifyPassword(string $rawPassword, ?string $hashedPassword): bool {
-//		return  $hashedPassword !== null && HashUtils::verifyPassword($rawPassword, $hashedPassword);
-//	}
 
 	function matchesPassword(string $password): bool {
 		return  HashUtils::verifyPassword($password, $this->value);
