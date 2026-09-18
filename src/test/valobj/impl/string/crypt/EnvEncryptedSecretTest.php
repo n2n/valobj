@@ -19,22 +19,6 @@ class EnvEncryptedSecretTest extends TestCase {
 	private const TEST_KEY = '0123456789abcdef0123456789abcdef';
 	private const SUB_TEST_KEY = '01fd456789abcdef0123456789abcdef';
 
-	private string|false $previousKey;
-
-	protected function setUp(): void {
-		$this->previousKey = getenv(EnvEncryptedSecret::KEY_ENVIRONMENT_VARIABLE_NAME);
-		putenv(EnvEncryptedSecret::KEY_ENVIRONMENT_VARIABLE_NAME . '=' . self::TEST_KEY);
-	}
-
-	protected function tearDown(): void {
-		if ($this->previousKey === false) {
-			putenv(EnvEncryptedSecret::KEY_ENVIRONMENT_VARIABLE_NAME);
-			return;
-		}
-
-		putenv(EnvEncryptedSecret::KEY_ENVIRONMENT_VARIABLE_NAME . '=' . $this->previousKey);
-	}
-
 	/**
 	 * @throws IllegalValueException
 	 */
@@ -70,16 +54,6 @@ class EnvEncryptedSecretTest extends TestCase {
 	}
 
 	/**
-	 * @throws IllegalValueException
-	 */
-	function testMissingEnvironmentVariable(): void {
-		putenv(EnvEncryptedSecret::KEY_ENVIRONMENT_VARIABLE_NAME);
-
-		$this->expectException(ConfigurationError::class);
-		EnvEncryptedSecret::checkedFromUnencrypted(PlainSecret::fromString('secret-api-key'));
-	}
-
-	/**
 	 * @throws BindTargetException
 	 * @throws UnresolvableBindableException|IllegalValueException
 	 */
@@ -100,7 +74,7 @@ class EnvEncryptedSecretTest extends TestCase {
 		putenv(SubEnvEncryptedSecret::KEY_ENVIRONMENT_VARIABLE_NAME);
 
 		$this->expectException(ConfigurationError::class);
-		SubEnvEncryptedSecret::checkedFromUnencrypted(PlainSecret::fromString('secret-api-key'));
+		SubEnvEncryptedSecret::checkedFrom(PlainSecret::fromString('secret-api-key'));
 	}
 
 	/**
@@ -109,7 +83,6 @@ class EnvEncryptedSecretTest extends TestCase {
 	 * @throws UnresolvableBindableException
 	 */
 	function testUnmarshalSub(): void {
-
 		putenv(SubEnvEncryptedSecret::KEY_ENVIRONMENT_VARIABLE_NAME . '=' . self::TEST_KEY);
 
 		$result = Bind::values('secret-api-key', null)
@@ -137,18 +110,34 @@ class EnvEncryptedSecretTest extends TestCase {
 	/**
 	 * @throws IllegalValueException
 	 */
-	function testCheckedFromUnencryptedRoundTripAndNull(): void {
-		$encryptedSecret = EnvEncryptedSecret::checkedFromUnencrypted('checked-secret');
+	function testFromUnencryptedRoundTripAndNull(): void {
+		$encryptedSecret = EnvEncryptedSecret::fromUnencrypted('checked-secret');
+
 		$this->assertSame('checked-secret', $encryptedSecret->toPlainSecret()->reveal());
-		$this->assertSame('checked-secret',
-				(new EnvEncryptedSecret($encryptedSecret->toScalar()))->toPlainSecret()->reveal());
-		$this->assertNull(EnvEncryptedSecret::checkedFromUnencrypted(null));
+
+		$this->assertSame('checked-secret', (new EnvEncryptedSecret($encryptedSecret->toScalar()))
+				->toPlainSecret()->reveal());
+
+		$this->assertNull(EnvEncryptedSecret::fromUnencrypted(null));
 	}
 
-	function testUncheckedFactoryWrapsMissingEnvironmentVariable(): void {
+	/**
+	 * @throws IllegalValueException
+	 */
+	function testFromUnencryptedMissingEnvironmentVariable(): void {
 		putenv(EnvEncryptedSecret::KEY_ENVIRONMENT_VARIABLE_NAME);
 
-		$this->expectException(IllegalStateException::class);
+		$this->expectException(ConfigurationError::class);
 		EnvEncryptedSecret::fromUnencrypted('secret');
+	}
+
+	/**
+	 * @throws IllegalValueException
+	 */
+	function testMissingEnvironmentVariable(): void {
+		putenv(EnvEncryptedSecret::KEY_ENVIRONMENT_VARIABLE_NAME);
+
+		$this->expectException(ConfigurationError::class);
+		EnvEncryptedSecret::checkedFrom(PlainSecret::fromString('secret-api-key'));
 	}
 }

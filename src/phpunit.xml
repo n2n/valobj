@@ -1,4 +1,8 @@
 <phpunit bootstrap="test/bootstrap.php">
+    <php>
+        <env name="SECRET_ENCRYPTION_KEY"
+             value="0123456789abcdef0123456789abcdef"/>
+    </php>
     <testsuites>
         <testsuite name="Global Test Suite">
             <directory>test</directory>
