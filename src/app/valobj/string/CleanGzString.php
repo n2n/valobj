@@ -27,11 +27,26 @@ class CleanGzString extends StringValueObjectAdapter {
 		IllegalValueException::assertTrue(StringUtils::isClean($value, static::SIMPLE_WHITESPACES_ONLY),
 				'Value not clean: ' . $this->value);
 	}
+
+	/**
+	 * determines if a string is a gzipped string supporting strings
+	 * encoded with either gzencode or gzcompress
+	 *
+	 * @param string $string the string to check for compression
+	 * @return bool whether or not the string was compmressed
+	 */
+	function isGzipped($value) {
+		return mb_strpos($value, "\x1f\x8b\x08", 'US-ASCII') === 0 && @gzuncompress($value) !== FALSE;
+	}
+
 	function uncompress(): ?string {
+		if($this->isGzipped($this->value)) {
+			return gzuncompress($this->value);
+		}
 		return null;
 	}
 
-	function fromUncompressed(string $uncompressedString): ?static {
-		return null;
+	function fromUncompressed(string $uncompressedString): ?string {
+		return gzcompress($this->value, 9);
 	}
 }
