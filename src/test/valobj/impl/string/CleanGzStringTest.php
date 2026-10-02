@@ -5,31 +5,62 @@ namespace valobj\impl\string;
 use PHPUnit\Framework\TestCase;
 use valobj\string\CleanGzString;
 use n2n\util\ex\IllegalStateException;
+use n2n\spec\valobj\err\IllegalValueException;
+use valobj\impl\string\mock\SubCleanGzString;
 
 class CleanGzStringTest extends TestCase {
-	function testfromUncompressed() {
+	function testFromUncompressed() {
 		$this->assertEquals(hex2bin('78da0bc9c82c5600a2448592d4e21285e292a2ccbc7400514907ad'),
 				CleanGzString::fromUncompressed('This is a test string'));
-
-
 	}
 
-	function testfromCompressed() {
+
+	/**
+	 * @throws IllegalValueException
+	 */
+	function testFromCompressed() {
 		$this->assertEquals('This is a test string',
-				CleanGzString::fromUncompressed('This is a test string')->uncompress());
-
-
+				(new CleanGzString(hex2bin('78da0bc9c82c5600a2448592d4e21285e292a2ccbc7400514907ad')))->uncompress());
 	}
 
-	function testFromLenientFalse() {
+	/**
+	 * @throws IllegalValueException
+	 */
+	function testHex2BinCleanGzString() {
 		$this->assertNull(CleanGzString::from(null));
 		$this->assertEquals(hex2bin('78da0bc9c82c5600a2448592d4e21285e292a2ccbc7400514907ad'),
-				CleanGzString::from(hex2bin('78da0bc9c82c5600a2448592d4e21285e292a2ccbc7400514907ad')));
+				new CleanGzString(hex2bin('78da0bc9c82c5600a2448592d4e21285e292a2ccbc7400514907ad')));
 	}
 
-	function testFromLenientFalseExpectException() {
+	function testSubCleanGzStringMinMaxAndWhiteSpaceAllowedWhichWillFailWithSubCleanGzString() {
+		$this->assertNotNull(CleanGzString::fromUncompressed(' T '));
+		$this->assertNotNull(CleanGzString::fromUncompressed('T'));
+		$this->assertNotNull(CleanGzString::fromUncompressed(' This is a test string '));
+	}
+
+	function testSubCleanGzStringExpectExceptionBecauseTooLong() {
 		$this->expectException(IllegalStateException::class);
-		CleanGzString::from(' This is a test string ');
+		$this->expectExceptionMessage('Value too long:');
+		SubCleanGzString::fromUncompressed(' This is a test string ');
+	}
+
+	function testSubCleanGzStringExpectExceptionBecauseTooShort() {
+		$this->expectException(IllegalStateException::class);
+		$this->expectExceptionMessage('Value too short:');
+		SubCleanGzString::fromUncompressed('T');
+	}
+
+	function testSubCleanGzStringExpectExceptionBecauseNotClean() {
+		$this->expectException(IllegalStateException::class);
+		$this->expectExceptionMessage('Value not clean:');
+		SubCleanGzString::fromUncompressed(' T ');
+	}
+
+
+	function testSubCleanGzStringExpectExceptionBecauseNotGzCompressed() {
+		$this->expectException(IllegalValueException::class);
+		$this->expectExceptionMessage('Value is no GZ String:');
+		new SubCleanGzString('ö');
 	}
 
 }

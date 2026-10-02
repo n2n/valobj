@@ -2,7 +2,6 @@
 
 namespace valobj\string;
 
-use valobj\string\StringValueObjectAdapter;
 use n2n\spec\valobj\err\IllegalValueException;
 use n2n\validation\validator\impl\ValidationUtils;
 use n2n\util\StringUtils;
@@ -17,15 +16,15 @@ class CleanGzString extends StringValueObjectAdapter {
 	public final function __construct(string $value) {
 		parent::__construct($value);
 
-		IllegalValueException::assertTrue($this->isGzString($value),
-				'Value is no GZ String: ' . $value);
-
-		$uncompressedValue = $this->uncompress();
-
 		if (self::MIN_LENGTH < 1) {
 			throw new ConfigurationError('Illegal MIN_LENGTH constant defined in ' . static::class
 					. '. Value must be at least 1.');
 		}
+
+		IllegalValueException::assertTrue($this->isGzString($value),
+				'Value is no GZ String: ' . $value);
+
+		$uncompressedValue = $this->uncompress();
 
 		IllegalValueException::assertTrue(ValidationUtils::maxlength($uncompressedValue, static::MAX_LENGTH),
 				'Value too long: ' . $uncompressedValue);
@@ -49,14 +48,16 @@ class CleanGzString extends StringValueObjectAdapter {
 		return ExUtils::try(fn () => new static(gzcompress($uncompressedString, 9)));
 	}
 
-	/**
-	 * determines if a string is a gzipped string supporting strings
-	 * encoded with either gzencode or gzcompress
-	 *
-	 * @param string $string the string to check for compression
-	 * @return bool whether or not the string was compmressed
-	 */
-	function isGzString($value) {
+	function isGzString($value): bool {
 		return @gzuncompress($value) !== FALSE;
+	}
+
+	public static function from(string|\Stringable|null $value, bool $lenient = false): null|static {
+		if ($value === null) {
+			return null;
+		}
+
+		return static::fromUncompressed(
+				StringUtils::clean(trim((string) $value), static::SIMPLE_WHITESPACES_ONLY));
 	}
 }
