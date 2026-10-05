@@ -7,6 +7,7 @@ use n2n\validation\validator\impl\ValidationUtils;
 use n2n\util\StringUtils;
 use n2n\util\ex\ExUtils;
 use n2n\util\ex\err\ConfigurationError;
+use n2n\util\ex\NotYetImplementedException;
 
 class CleanGzString extends StringValueObjectAdapter {
 	const MIN_LENGTH = 1;
@@ -14,14 +15,14 @@ class CleanGzString extends StringValueObjectAdapter {
 	const SIMPLE_WHITESPACES_ONLY = false;
 
 	public final function __construct(string $value) {
-		parent::__construct($value);
-
-		if (self::MIN_LENGTH < 1) {
+		if (static::MIN_LENGTH < 1) {
 			throw new ConfigurationError('Illegal MIN_LENGTH constant defined in ' . static::class
 					. '. Value must be at least 1.');
 		}
 
-		IllegalValueException::assertTrue($this->isGzString($value),
+		parent::__construct($value);
+
+		IllegalValueException::assertTrue(static::isGzString($value),
 				'Value is no GZ String: ' . $value);
 
 		$uncompressedValue = $this->uncompress();
@@ -48,7 +49,7 @@ class CleanGzString extends StringValueObjectAdapter {
 		return ExUtils::try(fn () => new static(gzcompress($uncompressedString, 9)));
 	}
 
-	function isGzString($value): bool {
+	static function isGzString($value): bool {
 		return @gzuncompress($value) !== FALSE;
 	}
 
@@ -59,5 +60,9 @@ class CleanGzString extends StringValueObjectAdapter {
 
 		return static::fromUncompressed(
 				StringUtils::clean(trim((string) $value), static::SIMPLE_WHITESPACES_ONLY));
+	}
+
+	public static function checkedFrom(string|\Stringable|null $value, bool $lenient = false): ?static {
+		throw new NotYetImplementedException();
 	}
 }

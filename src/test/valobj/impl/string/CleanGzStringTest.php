@@ -12,6 +12,8 @@ class CleanGzStringTest extends TestCase {
 	function testFromUncompressed() {
 		$this->assertEquals(hex2bin('78da0bc9c82c5600a2448592d4e21285e292a2ccbc7400514907ad'),
 				CleanGzString::fromUncompressed('This is a test string'));
+		$this->assertEquals(hex2bin('78da2b492d2e0100045d01c1'),
+				SubCleanGzString::fromUncompressed('test'));
 	}
 
 
