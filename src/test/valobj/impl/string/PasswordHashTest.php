@@ -54,7 +54,7 @@ class PasswordHashTest extends TestCase {
 				->exec();
 
 		$passwordHash = $result->get()[0];
-		$this->assertTrue($passwordHash->matchesPassword('Testerich'));
+		$this->assertTrue($passwordHash->verify('Testerich'));
 		$this->assertNull($result->get()[1]);
 	}
 
