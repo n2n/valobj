@@ -53,11 +53,31 @@ class CleanGzStringTest extends TestCase {
 	}
 
 	function testSubCleanGzStringExpectExceptionBecauseNotClean() {
+		// unchecked exception expected.
 		$this->expectException(IllegalStateException::class);
 		$this->expectExceptionMessage('Value not clean:');
 		SubCleanGzString::fromUncompressed(' T ');
 	}
 
+	function testSubCleanGzStringExpectExceptionBecauseNotClean2() {
+		// checked exception expected.
+		$this->expectException(IllegalValueException::class);
+		$this->expectExceptionMessage('Value not clean:');
+		SubCleanGzString::checkedFromUncompressed(' T ');
+	}
+
+	function testSubCleanGzStringExpectExceptionBecauseCleanedLenientTooShort() {
+		$this->expectException(IllegalValueException::class);
+		$this->expectExceptionMessage('Value too short:');
+		SubCleanGzString::checkedFromUncompressed(' T ', true);
+	}
+
+	function testSubCleanGzStringExpectExceptionBecauseCleanedLenientTooShort2() {
+		// trim string and afterwards remove undisplayable characters (after lenient).
+		$gzString = SubCleanGzString::fromUncompressed('  t‌e‌s‌t  ', true);
+		$this->assertEquals(hex2bin('78da2b492d2e0100045d01c1'), $gzString);
+		$this->assertEquals('test', $gzString->uncompress());
+	}
 
 	function testSubCleanGzStringExpectExceptionBecauseNotGzCompressed() {
 		$this->expectException(IllegalValueException::class);
