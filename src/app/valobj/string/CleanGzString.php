@@ -54,14 +54,13 @@ class CleanGzString extends StringValueObjectAdapter {
 	}
 
 	/**
-	 * Same as in {@link self::checkedFromUncompressed()} but throws unechecked exception on failure.
+	 * Same as in {@link self::checkedFromUncompressed()} but throws unchecked exception on failure.
 	 */
 	static function fromUncompressed(?string $uncompressedString, bool $lenient = false): ?static {
 		return ExUtils::try(fn () => static::checkedFromUncompressed($uncompressedString, $lenient));
 	}
 
 	/**
-	 * @param string|null $uncompressedString
 	 * @param bool $lenient if true uncompressedString will be striped of non-printable charcters and illegal whitespaces first.
 	 * @throws IllegalValueException
 	 */
