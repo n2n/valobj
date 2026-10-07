@@ -14,6 +14,7 @@ use valobj\int\PositiveInt;
 use valobj\int\NbIdArray;
 use valobj\string\MediumLabel;
 use valobj\string\LatinString;
+use valobj\string\Label;
 
 class ValueObjects {
 
@@ -35,6 +36,10 @@ class ValueObjects {
 
 	static function longLabel(string $value): LongLabel {
 		return ExUtils::try(fn () => new LongLabel($value));
+	}
+
+	static function label(string $value): Label {
+		return ExUtils::try(fn () => new Label($value));
 	}
 
 	static function text(string $value): Text {
