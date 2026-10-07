@@ -48,6 +48,6 @@ class DateArrayTest extends TestCase {
 		$this->assertFalse($result->isValid());
 		$errorMap = $result->getErrorMap();
 		$this->assertTrue(assert($errorMap instanceof ErrorMap));
-		$this->assertEquals('Invalid', (string) $errorMap->getAllMessages()[0]);
+		$this->assertEquals('Date Format', (string) $errorMap->getAllMessages()[0]);
 	}
 }

@@ -59,8 +59,8 @@ class NonSpecialCharsString extends StringValueObjectAdapter {
 		$class = new \ReflectionClass(static::class);
 
 		return Mappers::pipe(
-				Mappers::noSpecialChars(false, static::LOWER_CASE_ONLY,
-						minlength: static::MIN_LENGTH, maxlength: static::MAX_LENGTH),
+				Mappers::noSpecialChars(mandatory: false, minlength: static::MIN_LENGTH,
+						maxlength: static::MAX_LENGTH, lowercaseOnly: static::LOWER_CASE_ONLY),
 				Mappers::valueIfNotNull(fn(string $value) => $class->newInstance($value)));
 	}
 }
