@@ -30,6 +30,10 @@ class CleanGzStringTest extends TestCase {
 	 */
 	function testHex2BinCleanGzString() {
 		$this->assertNull(CleanGzString::from(null));
+		$this->assertNull(CleanGzString::checkedFromUncompressed('', true));
+		$this->assertNull(CleanGzString::fromUncompressed(null));
+		$this->assertEquals('This is a test string',
+				CleanGzString::checkedFrom(hex2bin('78da0bc9c82c5600a2448592d4e21285e292a2ccbc7400514907ad'))->uncompress());
 		$this->assertEquals(hex2bin('78da0bc9c82c5600a2448592d4e21285e292a2ccbc7400514907ad'),
 				new CleanGzString(hex2bin('78da0bc9c82c5600a2448592d4e21285e292a2ccbc7400514907ad')));
 	}
