@@ -2,9 +2,9 @@
 
 namespace valobj\impl\string\mock;
 
-use valobj\string\CleanGzString;
+use valobj\string\CleanGzBin;
 
-class SubCleanGzString extends CleanGzString {
+class SubCleanGzBin extends CleanGzBin {
 
 	const MIN_LENGTH = 3;
 	const MAX_LENGTH = 8;

@@ -18,9 +18,9 @@ use n2n\util\ex\ExUtils;
  * gzuncompresses or gzcompresses gzstring.
  */
 
-class CleanGzString extends StringValueObjectAdapter {
+class CleanGzBin extends StringValueObjectAdapter {
 	const MIN_LENGTH = 1;
-	const MAX_LENGTH = 100000;
+	const MAX_LENGTH = 255;
 	const SIMPLE_WHITESPACES_ONLY = false;
 
 	public final function __construct(string $value) {
@@ -34,15 +34,15 @@ class CleanGzString extends StringValueObjectAdapter {
 		try {
 			$uncompressedValue = StringUtils::gzuncompress($this->value);
 		} catch (GzuncompressFailedException $e) {
-			throw new IllegalValueException('Value is no GZ String: ' . $this->value);
+			throw new IllegalValueException('Value is no gnu zipped string: ' . $this->value);
 		}
 
 		IllegalValueException::assertTrue(ValidationUtils::maxlength($uncompressedValue, static::MAX_LENGTH),
-				'Value too long: ' . $uncompressedValue);
+				'Uncompressed value too long: ' . $uncompressedValue);
 		IllegalValueException::assertTrue(ValidationUtils::minlength($uncompressedValue, static::MIN_LENGTH),
-				'Value too short: ' . $uncompressedValue);
+				'Uncompressed value too short: ' . $uncompressedValue);
 		IllegalValueException::assertTrue(StringUtils::isClean($uncompressedValue, static::SIMPLE_WHITESPACES_ONLY),
-				'Value not clean: ' . $uncompressedValue);
+				'Uncompressed value not clean: ' . $uncompressedValue);
 	}
 
 	function uncompress(): string {
@@ -69,7 +69,7 @@ class CleanGzString extends StringValueObjectAdapter {
 			return null;
 		}
 		if ($lenient) {
-			$uncompressedString = StringUtils::clean(trim((string) $uncompressedString), static::SIMPLE_WHITESPACES_ONLY);
+			$uncompressedString = StringUtils::clean(trim($uncompressedString), static::SIMPLE_WHITESPACES_ONLY);
 		}
 		return new static(gzcompress($uncompressedString, 9));
 
