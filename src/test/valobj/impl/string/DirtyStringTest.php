@@ -19,12 +19,12 @@ class DirtyStringTest extends TestCase {
 
 
 	function testConstruct(): void {
-		$longLabel = DirtyString::from('Testerich');
-		$this->assertEquals('Testerich', $longLabel->toScalar());
+		$dirtyString = DirtyString::from('Testerich');
+		$this->assertEquals('Testerich', $dirtyString->toScalar());
 
 		//as long only visible chars are used (and maybe spaces between) almost anything is possible even emojis
-		$longLabel = DirtyString::from('🔧N2N-Works🔧');
-		$this->assertEquals('🔧N2N-Works🔧', $longLabel->toScalar());
+		$dirtyString = DirtyString::from('🔧N2N-Works🔧');
+		$this->assertEquals('🔧N2N-Works🔧', $dirtyString->toScalar());
 
 		$this->assertEquals(' ​äüö‍‍‍àéè+‌"*ç%‎‏&/',
 				DirtyString::from(' ​äüö‍‍‍àéè+‌"*ç%‎‏&/'));
@@ -42,11 +42,11 @@ class DirtyStringTest extends TestCase {
 	 */
 	function testUnmarshal(): void {
 		$result = Bind::values('Testerich', null)
-				->map(Mappers::unmarshal(LongLabel::class))
+				->map(Mappers::unmarshal(DirtyString::class))
 				->toValue()
 				->exec();
 
-		$this->assertEquals(new LongLabel('Testerich'), $result->get()[0]);
+		$this->assertEquals(new DirtyString('Testerich'), $result->get()[0]);
 		$this->assertNull($result->get()[1]);
 	}
 
@@ -57,7 +57,7 @@ class DirtyStringTest extends TestCase {
 	 */
 	function testUnmarshalValFail(): void {
 		$result = Bind::values(str_repeat('s', 256))
-				->map(Mappers::unmarshal(LongLabel::class))
+				->map(Mappers::unmarshal(DirtyString::class))
 				->toValue()
 				->exec();
 
@@ -74,7 +74,7 @@ class DirtyStringTest extends TestCase {
 	 * @throws BindMismatchException
 	 */
 	function testMarshal(): void {
-		$result = Bind::values(new LongLabel('Testerich'), null)
+		$result = Bind::values(new DirtyString('Testerich'), null)
 				->map(Mappers::marshal())
 				->toValue()
 				->exec();
@@ -93,8 +93,8 @@ class DirtyStringTest extends TestCase {
 				->toValue()
 				->exec();
 
-		$subLongLabel = $result->get();
-		$this->assertInstanceOf(SubDirtyString::class, $subLongLabel);
-		$this->assertEquals(new SubDirtyString('very-short'), $subLongLabel);
+		$subDirtyString = $result->get();
+		$this->assertInstanceOf(SubDirtyString::class, $subDirtyString);
+		$this->assertEquals(new SubDirtyString('very-short'), $subDirtyString);
 	}
 }
