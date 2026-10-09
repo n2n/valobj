@@ -19,6 +19,10 @@ class EnvEncryptedSecretTest extends TestCase {
 	private const TEST_KEY = '0123456789abcdef0123456789abcdef';
 	private const SUB_TEST_KEY = '01fd456789abcdef0123456789abcdef';
 
+	protected function setUp(): void {
+		putenv(EnvEncryptedSecret::KEY_ENVIRONMENT_VARIABLE_NAME . '=' . self::TEST_KEY);
+	}
+
 	/**
 	 * @throws IllegalValueException
 	 */
@@ -55,7 +59,7 @@ class EnvEncryptedSecretTest extends TestCase {
 
 	/**
 	 * @throws BindTargetException
-	 * @throws UnresolvableBindableException|IllegalValueException
+	 * @throws UnresolvableBindableException
 	 */
 	function testMarshalNotSupported(): void {
 		$encryptedSecret = EnvEncryptedSecret::fromUnencrypted(PlainSecret::fromString('secret-api-key'));
@@ -121,9 +125,6 @@ class EnvEncryptedSecretTest extends TestCase {
 		$this->assertNull(EnvEncryptedSecret::fromUnencrypted(null));
 	}
 
-	/**
-	 * @throws IllegalValueException
-	 */
 	function testFromUnencryptedMissingEnvironmentVariable(): void {
 		putenv(EnvEncryptedSecret::KEY_ENVIRONMENT_VARIABLE_NAME);
 
@@ -140,4 +141,57 @@ class EnvEncryptedSecretTest extends TestCase {
 		$this->expectException(ConfigurationError::class);
 		EnvEncryptedSecret::checkedFrom(PlainSecret::fromString('secret-api-key'));
 	}
+
+	/**
+	 * @throws IllegalValueException
+	 */
+	function testCheckedUnencryptedFactoryPreservesSubclassAndNull(): void {
+		putenv(SubEnvEncryptedSecret::KEY_ENVIRONMENT_VARIABLE_NAME . '=' . self::SUB_TEST_KEY);
+		$secret = SubEnvEncryptedSecret::checkedFromUnencrypted('subclass-secret');
+		$this->assertInstanceOf(SubEnvEncryptedSecret::class, $secret);
+		$this->assertSame('subclass-secret', $secret->toPlainSecret()->reveal());
+		$this->assertSame($secret->toScalar(), SubEnvEncryptedSecret::checkedFrom($secret->toScalar())->toScalar());
+		$this->assertNull(SubEnvEncryptedSecret::checkedFromUnencrypted(null));
+	}
+
+	function testCheckedFactoryRejectsMalformedEnvelope(): void {
+		$values = [
+			'null', '"string"', 'not-json', '{}',
+		];
+
+
+		foreach ($values as $value) {
+			try {
+				EnvEncryptedSecret::checkedFrom($value);
+				$this->fail('Malformed secret was accepted: ' . $value);
+			} catch (IllegalValueException $e) {
+				$this->assertStringContainsString('Invalid encrypted secret', $e->getMessage());
+			}
+		}
+	}
+
+	function testInvalidNonceEncodingPropagatesFromDecryptor(): void {
+		$this->expectException(\InvalidArgumentException::class);
+		EnvEncryptedSecret::checkedFrom('{"nonce":"%%%","tag":"aA==","ciphertext":"aA=="}');
+	}
+
+	function testInvalidTagEncodingPropagatesFromDecryptor(): void {
+		$this->expectException(\InvalidArgumentException::class);
+		EnvEncryptedSecret::checkedFrom('{"nonce":"aA==","tag":"%%%","ciphertext":"aA=="}');
+	}
+
+	function testInvalidCiphertextEncodingPropagatesFromDecryptor(): void {
+		$this->expectException(\InvalidArgumentException::class);
+		EnvEncryptedSecret::checkedFrom('{"nonce":"aA==","tag":"aA==","ciphertext":"%%%"}');
+	}
+
+	/**
+	 * @throws IllegalValueException
+	 */
+	function testCheckedFactoryPropagatesMissingConfiguration(): void {
+		putenv(EnvEncryptedSecret::KEY_ENVIRONMENT_VARIABLE_NAME);
+		$this->expectException(ConfigurationError::class);
+		EnvEncryptedSecret::checkedFromUnencrypted('secret');
+	}
+
 }

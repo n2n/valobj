@@ -13,6 +13,9 @@ use n2n\util\crypt\symmetric\EncryptedSecret;
 use n2n\util\crypt\symmetric\SymmetricCryptUtils;
 use n2n\util\ex\err\ConfigurationError;
 use n2n\util\type\attrs\AttributesException;
+use n2n\util\StringUtils;
+use n2n\util\JsonDecodeFailedException;
+use n2n\util\ex\IllegalStateException;
 use n2n\util\type\TypeConstraints;
 use n2n\validation\validator\impl\Validators;
 use valobj\string\StringValueObjectAdapter;
@@ -38,18 +41,26 @@ class EnvEncryptedSecret extends StringValueObjectAdapter {
 	/**
 	 * @throws IllegalValueException
 	 */
-	static function fromUnencrypted(PlainSecret|string|null $plainSecret): static|null {
+	static function checkedFromUnencrypted(PlainSecret|string|null $plainSecret): static|null {
 		if ($plainSecret === null) {
 			return null;
 		}
 
-		$plainSecret = is_string($plainSecret) ? PlainSecret::fromString($plainSecret) : $plainSecret;
+		$plainSecret = is_string($plainSecret) ? new PlainSecret($plainSecret) : $plainSecret;
 		$key = static::readKey();
 
 		try {
 			return new static(SymmetricCryptUtils::encrypt($plainSecret, $key)->toJson());
 		} catch (EncryptionFailedException $e) {
 			throw new IllegalValueException('Could not encrypt secret.', previous: $e);
+		}
+	}
+
+	static function fromUnencrypted(PlainSecret|string|null $plainSecret): static|null {
+		try {
+			return static::checkedFromUnencrypted($plainSecret);
+		} catch (IllegalValueException $e) {
+			throw new IllegalStateException($e->getMessage(), previous: $e);
 		}
 	}
 
@@ -61,7 +72,7 @@ class EnvEncryptedSecret extends StringValueObjectAdapter {
 	static function encryptMapper(): Mapper {
 		return Mappers::pipe(Mappers::type(TypeConstraints::string(true)),
 				Validators::minlength(1),
-				Mappers::valueIfNotNull(fn(string $value) => static::fromUnencrypted($value))
+				Mappers::valueIfNotNull(fn(string $value) => static::checkedFromUnencrypted($value))
 		);
 	}
 
@@ -79,9 +90,11 @@ class EnvEncryptedSecret extends StringValueObjectAdapter {
 		$key = static::readKey();
 
 		try {
-			$encryptedSecret = EncryptedSecret::fromJson($value);
+			$data = StringUtils::jsonDecode($value, true);
+			IllegalValueException::assertTrue(is_array($data), 'Invalid encrypted secret envelope.');
+			$encryptedSecret = EncryptedSecret::fromArray($data);
 			return SymmetricCryptUtils::decrypt($encryptedSecret, $key);
-		} catch (AttributesException|DecryptionFailedException|\InvalidArgumentException $e) {
+		} catch (AttributesException|DecryptionFailedException|JsonDecodeFailedException $e) {
 			throw new IllegalValueException('Invalid encrypted secret.', previous: $e);
 		}
 	}
