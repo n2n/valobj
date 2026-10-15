@@ -30,12 +30,12 @@ class CleanString extends StringValueObjectAdapter {
 	 * @throws IllegalValueException if passed value is invalid.
 	 */
 	public final function __construct(string $value) {
-		parent::__construct($value);
-
-		if (self::MIN_LENGTH < 1) {
+		if (static::MIN_LENGTH < 1) {
 			throw new ConfigurationError('Illegal MIN_LENGTH constant defined in ' . static::class
 					. '. Value must be at least 1.');
 		}
+
+		parent::__construct($value);
 
 		IllegalValueException::assertTrue(ValidationUtils::maxlength($this->value, static::MAX_LENGTH),
 				'Value too long: ' . $this->value);

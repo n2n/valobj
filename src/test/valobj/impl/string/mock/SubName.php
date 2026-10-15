@@ -5,6 +5,6 @@ namespace valobj\impl\string\mock;
 
 use valobj\string\Name;
 
-class SubName extends Name {
-
-}
+//class SubName extends Name {
+//
+//}

@@ -9,7 +9,7 @@ use n2n\util\ex\ExUtils;
 
 abstract class StringValueObjectAdapter implements StringValueObject, \Stringable, \JsonSerializable {
 
-	function __construct(protected string $value) {
+	function __construct(protected readonly string $value) {
 		IllegalValueException::assertTrue(ValidationUtils::minlength($this->value, 1),
 				'Empty string not allowed.');
 	}
