@@ -10,7 +10,7 @@ use n2n\bind\err\BindTargetException;
 use n2n\bind\err\BindMismatchException;
 use n2n\bind\err\UnresolvableBindableException;
 use n2n\validation\plan\ErrorMap;
-use valobj\string\colorHex;
+use valobj\string\ColorHex;
 
 class ColorHexTest extends TestCase {
 
