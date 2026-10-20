@@ -4,7 +4,6 @@ namespace valobj\impl\string;
 
 use PHPUnit\Framework\TestCase;
 use n2n\spec\valobj\err\IllegalValueException;
-use valobj\ValueObjects;
 use n2n\bind\build\impl\Bind;
 use n2n\bind\mapper\impl\Mappers;
 use n2n\bind\err\BindTargetException;
@@ -21,7 +20,7 @@ class EmailTest extends TestCase {
 	}
 
 	function testConstruct(): void {
-		$email = ValueObjects::email('holeradio@huii.ch');
+		$email = Email::from('holeradio@huii.ch');
 
 		$this->assertEquals('holeradio@huii.ch', $email->toScalar());
 		$this->assertEquals('holeradio@huii.ch', (string) $email);

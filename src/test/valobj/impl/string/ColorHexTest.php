@@ -4,7 +4,6 @@ namespace valobj\impl\string;
 
 use PHPUnit\Framework\TestCase;
 use n2n\spec\valobj\err\IllegalValueException;
-use valobj\ValueObjects;
 use n2n\bind\build\impl\Bind;
 use n2n\bind\mapper\impl\Mappers;
 use n2n\bind\err\BindTargetException;
@@ -20,7 +19,7 @@ class ColorHexTest extends TestCase {
 	}
 
 	function testConstruct(): void {
-		$colorHex = ValueObjects::colorHex('#00ffaa');
+		$colorHex = ColorHex::from('#00ffaa');
 
 		$this->assertEquals('#00ffaa', $colorHex->toScalar());
 		$this->assertEquals('#00ffaa', (string) $colorHex);

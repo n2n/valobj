@@ -8,7 +8,6 @@ use n2n\bind\err\UnresolvableBindableException;
 use n2n\bind\build\impl\Bind;
 use n2n\bind\mapper\impl\Mappers;
 use valobj\int\NbId;
-use valobj\ValueObjects;
 use n2n\validation\plan\ErrorMap;
 use valobj\int\NbIdArray;
 use PHPUnit\Framework\TestCase;
@@ -28,7 +27,7 @@ class NbIdArrayTest extends TestCase {
 				->exec();
 
 		$this->assertEquals(
-				[ValueObjects::nbId(1), ValueObjects::nbId(2)],
+				[NbId::from(1), NbId::from(2)],
 				$result->get()['key1']->toArray());
 	}
 

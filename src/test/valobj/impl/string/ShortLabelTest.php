@@ -3,7 +3,6 @@
 namespace valobj\impl\string;
 
 use PHPUnit\Framework\TestCase;
-use valobj\ValueObjects;
 use n2n\util\ex\IllegalStateException;
 use n2n\bind\err\BindTargetException;
 use n2n\bind\err\BindMismatchException;
@@ -12,41 +11,39 @@ use n2n\bind\build\impl\Bind;
 use n2n\bind\mapper\impl\Mappers;
 use n2n\validation\plan\ErrorMap;
 use valobj\string\ShortLabel;
-use n2n\spec\valobj\err\IllegalValueException;
-use valobj\impl\int\mock\SubNbId;
 use valobj\impl\string\mock\SubShortLabel;
 
 class ShortLabelTest extends TestCase {
 
 
 	function testConstruct(): void {
-		$shortLabel = ValueObjects::shortLabel('Testerich');
+		$shortLabel = ShortLabel::from('Testerich');
 		$this->assertEquals('Testerich', $shortLabel->toScalar());
 
 		//as long only visible chars are used (and maybe spaces between) almost anything is possible even emojis
-		$shortLabel = ValueObjects::shortLabel('🔧N2N-Works🔧');
+		$shortLabel = ShortLabel::from('🔧N2N-Works🔧');
 		$this->assertEquals('🔧N2N-Works🔧', $shortLabel->toScalar());
 	}
 
 	function testConstructExceptionBecauseToLong(): void {
 		$this->expectException(IllegalStateException::class);
-		ValueObjects::shortLabel(str_repeat('s', 32));
+		ShortLabel::from(str_repeat('s', 32));
 	}
 
 	function testShortLabelValueObjectExpectExceptionBecauseNotClean() {
 		$this->expectException(IllegalStateException::class);
 		$this->assertEquals('name',
-				ValueObjects::shortLabel(' ​äüö‍‍‍àéè+‌"*ç%‎‏&/'));
+				ShortLabel::from(' ​äüö‍‍‍àéè+‌"*ç%‎‏&/'));
 	}
 
 	function testShortLabelValueObjectExpectExceptionBecauseLeadingSpaceIsNotClean() {
 		$this->expectException(IllegalStateException::class);
-		$this->assertEquals('name', ValueObjects::shortLabel(' asdf'));
+		$this->assertEquals('name', ShortLabel::from(' asdf'));
 	}
 
 	function testShortLabelValueObjectExpectExceptionBecauseTrailingSpaceIsNotClean() {
 		$this->expectException(IllegalStateException::class);
-		$this->assertEquals('name', ValueObjects::shortLabel('asdf '));
+		$this->assertEquals('name', ShortLabel::from('asdf '));
 	}
 
 	/**

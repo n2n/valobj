@@ -3,7 +3,6 @@
 namespace valobj\impl\string;
 
 use PHPUnit\Framework\TestCase;
-use valobj\ValueObjects;
 use n2n\util\ex\IllegalStateException;
 use n2n\bind\err\BindTargetException;
 use n2n\bind\err\BindMismatchException;
@@ -18,29 +17,29 @@ class TextTest extends TestCase {
 
 
 	function testConstruct(): void {
-		$text = ValueObjects::text('Testerich');
+		$text = Text::from('Testerich');
 		$this->assertEquals('Testerich', $text->toScalar());
 
 		//as long only visible chars are used (and maybe spaces between) almost anything is possible even emojis
-		$text = ValueObjects::text('🔧N2N-Works🔧');
+		$text = Text::from('🔧N2N-Works🔧');
 		$this->assertEquals('🔧N2N-Works🔧', $text->toScalar());
 
-		$text = ValueObjects::text(str_repeat('s', 5000));
+		$text = Text::from(str_repeat('s', 5000));
 		$this->assertEquals(str_repeat('s', 5000), $text->toScalar());
 
-		$this->assertEquals(' asdf', ValueObjects::text(' asdf'));
-		$this->assertEquals('asdf ', ValueObjects::text('asdf '));
+		$this->assertEquals(' asdf', Text::from(' asdf'));
+		$this->assertEquals('asdf ', Text::from('asdf '));
 	}
 
 	function testConstructExceptionBecauseToLong(): void {
 		$this->expectException(IllegalStateException::class);
-		ValueObjects::text(str_repeat('s', 5501));
+		Text::from(str_repeat('s', 5501));
 	}
 
 	function testTextValueObjectExpectExceptionBecauseNotClean() {
 		$this->expectException(IllegalStateException::class);
 		$this->assertEquals('name',
-				ValueObjects::text(' ​äüö‍‍‍àéè+‌"*ç%‎‏&/'));
+				Text::from(' ​äüö‍‍‍àéè+‌"*ç%‎‏&/'));
 	}
 
 	/**

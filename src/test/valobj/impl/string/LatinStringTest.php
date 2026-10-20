@@ -3,7 +3,6 @@
 namespace valobj\impl\string;
 
 use PHPUnit\Framework\TestCase;
-use valobj\ValueObjects;
 use n2n\util\ex\IllegalStateException;
 use valobj\string\LatinString;
 use n2n\bind\err\BindTargetException;
@@ -18,34 +17,34 @@ class LatinStringTest extends TestCase {
 
 
 	function testConstruct(): void {
-		$latinString = ValueObjects::latinString('Testerich');
+		$latinString = LatinString::from('Testerich');
 		$this->assertTrue($latinString instanceof LatinString);
 		$this->assertEquals('Testerich', $latinString->toScalar());
 
-		$latinString = ValueObjects::latinString('äüöàéèåçÿßœ');
+		$latinString = LatinString::from('äüöàéèåçÿßœ');
 		$this->assertEquals('äüöàéèåçÿßœ', $latinString->toScalar());
 	}
 
 	function testConstructExceptionBecauseToLong(): void {
 		$this->expectException(IllegalStateException::class);
 		//an arabic latinString that is way too long, because it includes father, grandfather and epithet
-		ValueObjects::latinString('Hadschi Rafiq Tariq Ben Hadschi Nabil Kamal Ibn Hadschi Faris al Farouk');
+		LatinString::from('Hadschi Rafiq Tariq Ben Hadschi Nabil Kamal Ibn Hadschi Faris al Farouk');
 	}
 
 	function testLatinStringValueObjectExpectExceptionBecauseNotClean() {
 		$this->expectException(IllegalStateException::class);
 		$this->assertEquals('latinString',
-				ValueObjects::latinString(' ​äüö‍‍‍àéè+‌"*ç%‎‏&/'));
+				LatinString::from(' ​äüö‍‍‍àéè+‌"*ç%‎‏&/'));
 	}
 
 	function testLatinStringValueObjectExpectExceptionBecauseLeadingSpaceIsNotClean() {
 		$this->expectException(IllegalStateException::class);
-		$this->assertEquals('latinString', ValueObjects::latinString(' asdf'));
+		$this->assertEquals('latinString', LatinString::from(' asdf'));
 	}
 
 	function testLatinStringValueObjectExpectExceptionBecauseTrailingSpaceIsNotClean() {
 		$this->expectException(IllegalStateException::class);
-		$this->assertEquals('latinString', ValueObjects::latinString('asdf '));
+		$this->assertEquals('latinString', LatinString::from('asdf '));
 	}
 
 	/**

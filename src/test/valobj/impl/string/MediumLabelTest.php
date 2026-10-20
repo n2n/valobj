@@ -3,7 +3,6 @@
 namespace valobj\impl\string;
 
 use PHPUnit\Framework\TestCase;
-use valobj\ValueObjects;
 use n2n\util\ex\IllegalStateException;
 use n2n\bind\err\BindTargetException;
 use n2n\bind\err\BindMismatchException;
@@ -18,33 +17,33 @@ class MediumLabelTest extends TestCase {
 
 
 	function testConstruct(): void {
-		$MediumLabel = ValueObjects::mediumLabel('Testerich');
+		$MediumLabel = MediumLabel::from('Testerich');
 		$this->assertEquals('Testerich', $MediumLabel->toScalar());
 
 		//as long only visible chars are used (and maybe spaces between) almost anything is possible even emojis
-		$MediumLabel = ValueObjects::mediumLabel('🔧N2N-Works🔧');
+		$MediumLabel = MediumLabel::from('🔧N2N-Works🔧');
 		$this->assertEquals('🔧N2N-Works🔧', $MediumLabel->toScalar());
 	}
 
 	function testConstructExceptionBecauseToLong(): void {
 		$this->expectException(IllegalStateException::class);
-		ValueObjects::mediumLabel(str_repeat('s', 128));
+		MediumLabel::from(str_repeat('s', 128));
 	}
 
 	function testMediumLabelValueObjectExpectExceptionBecauseNotClean() {
 		$this->expectException(IllegalStateException::class);
 		$this->assertEquals('name',
-				ValueObjects::mediumLabel(' ​äüö‍‍‍àéè+‌"*ç%‎‏&/'));
+				MediumLabel::from(' ​äüö‍‍‍àéè+‌"*ç%‎‏&/'));
 	}
 
 	function testMediumLabelValueObjectExpectExceptionBecauseLeadingSpaceIsNotClean() {
 		$this->expectException(IllegalStateException::class);
-		$this->assertEquals('name', ValueObjects::mediumLabel(' asdf'));
+		$this->assertEquals('name', MediumLabel::from(' asdf'));
 	}
 
 	function testMediumLabelValueObjectExpectExceptionBecauseTrailingSpaceIsNotClean() {
 		$this->expectException(IllegalStateException::class);
-		$this->assertEquals('name', ValueObjects::mediumLabel('asdf '));
+		$this->assertEquals('name', MediumLabel::from('asdf '));
 	}
 
 	/**

@@ -2,7 +2,6 @@
 
 namespace valobj\impl\int;
 
-use valobj\ValueObjects;
 use n2n\util\ex\IllegalStateException;
 use valobj\int\NbId;
 use PHPUnit\Framework\TestCase;
@@ -18,13 +17,13 @@ use n2n\spec\valobj\err\IllegalValueException;
 class NbIdTest extends TestCase {
 
 	function testConstruct(): void {
-		$nbId = ValueObjects::nbId(1);
+		$nbId = NbId::from(1);
 		$this->assertSame(1, $nbId->toScalar());
 	}
 
 	function testConstructExceptionBecauseToSmall(): void {
 		$this->expectException(IllegalStateException::class);
-		ValueObjects::nbId(0);
+		NbId::from(0);
 	}
 
 	/**
@@ -38,7 +37,7 @@ class NbIdTest extends TestCase {
 				->toValue()
 				->exec();
 
-		$this->assertEquals(ValueObjects::nbId(1), $result->get()[0]);
+		$this->assertEquals(NbId::from(1), $result->get()[0]);
 		$this->assertNull($result->get()[1]);
 	}
 
