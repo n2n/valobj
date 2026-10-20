@@ -3,6 +3,7 @@
 namespace valobj\float;
 
 use n2n\spec\valobj\scalar\FloatValueObject;
+use n2n\util\ex\ExUtils;
 
 abstract class FloatValueObjectAdapter implements FloatValueObject, \Stringable, \JsonSerializable {
 	function __construct(protected float $value) {
@@ -30,5 +31,17 @@ abstract class FloatValueObjectAdapter implements FloatValueObject, \Stringable,
 
 	function toScalar(): float {
 		return $this->value;
+	}
+
+	static function from(FloatValueObject|float|null $value): ?static {
+		if ($value === null) {
+			return null;
+		}
+
+		if ($value instanceof FloatValueObject) {
+			$value = $value->toScalar();
+		}
+
+		return ExUtils::try(fn () => new static($value));
 	}
 }
