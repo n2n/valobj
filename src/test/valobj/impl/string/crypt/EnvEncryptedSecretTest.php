@@ -27,7 +27,7 @@ class EnvEncryptedSecretTest extends TestCase {
 	 * @throws IllegalValueException
 	 */
 	function testEncrypt(): void {
-		$encryptedSecret = EnvEncryptedSecret::fromUnencrypted(PlainSecret::fromString('secret-api-key'));
+		$encryptedSecret = EnvEncryptedSecret::fromUnencrypted(PlainSecret::from('secret-api-key'));
 
 		$this->assertNotSame('secret-api-key', $encryptedSecret->toScalar());
 		$this->assertSame('secret-api-key', $encryptedSecret->toPlainSecret()->reveal());
@@ -62,7 +62,7 @@ class EnvEncryptedSecretTest extends TestCase {
 	 * @throws UnresolvableBindableException
 	 */
 	function testMarshalNotSupported(): void {
-		$encryptedSecret = EnvEncryptedSecret::fromUnencrypted(PlainSecret::fromString('secret-api-key'));
+		$encryptedSecret = EnvEncryptedSecret::fromUnencrypted(PlainSecret::from('secret-api-key'));
 
 		$this->expectException(BindMismatchException::class);
 		Bind::values($encryptedSecret)
@@ -78,7 +78,7 @@ class EnvEncryptedSecretTest extends TestCase {
 		putenv(SubEnvEncryptedSecret::KEY_ENVIRONMENT_VARIABLE_NAME);
 
 		$this->expectException(ConfigurationError::class);
-		SubEnvEncryptedSecret::checkedFrom(PlainSecret::fromString('secret-api-key'));
+		SubEnvEncryptedSecret::checkedFrom(PlainSecret::from('secret-api-key'));
 	}
 
 	/**
@@ -139,7 +139,7 @@ class EnvEncryptedSecretTest extends TestCase {
 		putenv(EnvEncryptedSecret::KEY_ENVIRONMENT_VARIABLE_NAME);
 
 		$this->expectException(ConfigurationError::class);
-		EnvEncryptedSecret::checkedFrom(PlainSecret::fromString('secret-api-key'));
+		EnvEncryptedSecret::checkedFrom(PlainSecret::from('secret-api-key'));
 	}
 
 	/**

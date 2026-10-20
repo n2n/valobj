@@ -12,13 +12,13 @@ use n2n\util\crypt\PlainSecret;
 use n2n\util\crypt\symmetric\EncryptedSecret;
 use n2n\util\crypt\symmetric\SymmetricCryptUtils;
 use n2n\util\ex\err\ConfigurationError;
-use n2n\util\type\attrs\AttributesException;
 use n2n\util\StringUtils;
 use n2n\util\JsonDecodeFailedException;
 use n2n\util\ex\IllegalStateException;
 use n2n\util\type\TypeConstraints;
 use n2n\validation\validator\impl\Validators;
 use valobj\string\StringValueObjectAdapter;
+use n2n\util\attr\AttributesException;
 
 class EnvEncryptedSecret extends StringValueObjectAdapter {
 
@@ -70,10 +70,10 @@ class EnvEncryptedSecret extends StringValueObjectAdapter {
 	}
 
 	static function encryptMapper(): Mapper {
+		$class = new \ReflectionClass(static::class);
 		return Mappers::pipe(Mappers::type(TypeConstraints::string(true)),
 				Validators::minlength(1),
-				Mappers::valueIfNotNull(fn(string $value) => static::checkedFromUnencrypted($value))
-		);
+				Mappers::valueIfNotNull(fn(string $value) => $class->getMethod('fromUnencrypted')->invoke(null, $value)));
 	}
 
 	/**
