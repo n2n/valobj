@@ -34,9 +34,13 @@ abstract class IntValueObjectAdapter implements IntValueObject, \Stringable, \Js
 		return $this->value;
 	}
 
-	static function from(int|null $value): ?static {
+	static function from(int|IntValueObject|null $value): ?static {
 		if ($value === null) {
 			return null;
+		}
+
+		if ($value instanceof IntValueObject) {
+			$value = $value->toScalar();
 		}
 
 		return ExUtils::try(fn () => new static($value));

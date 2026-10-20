@@ -16,6 +16,9 @@ use valobj\string\MediumLabel;
 use valobj\string\LatinString;
 use valobj\string\Label;
 
+/**
+ * @deprecated use the from() method of the particular value object type
+ */
 class ValueObjects {
 
 	static function email(string $email): Email {
