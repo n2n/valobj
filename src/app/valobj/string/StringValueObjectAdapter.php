@@ -38,7 +38,7 @@ abstract class StringValueObjectAdapter implements StringValueObject, \Stringabl
 	}
 
 	static function from(string|\Stringable|null $value, bool $lenient = false): ?static {
-		return ExUtils::try(fn () => self::checkedFrom($value, $lenient));
+		return ExUtils::try(fn () => static::checkedFrom($value, $lenient));
 	}
 
 	/**
