@@ -14,6 +14,8 @@ use n2n\validation\plan\ErrorMap;
 use valobj\impl\string\mock\SubNonSpecialCharsString;
 use n2n\util\magic\MagicContext;
 use n2n\test\case\N2nTestCaseTrait;
+use n2n\util\ex\err\ConfigurationError;
+use valobj\impl\string\mock\IllegalMinLengthNonSpecialCharsString;
 
 class NonSpecialCharsStringTest extends TestCase {
 	use N2nTestCaseTrait;
@@ -114,5 +116,8 @@ class NonSpecialCharsStringTest extends TestCase {
 		$this->assertTypeSafeEquals(new SubNonSpecialCharsString('myStreet'), $subName[1]);
 	}
 
-
+	function testIllegalMinLengthConstantInSubclass(): void {
+		$this->expectException(ConfigurationError::class);
+		new IllegalMinLengthNonSpecialCharsString('testerich');
+	}
 }

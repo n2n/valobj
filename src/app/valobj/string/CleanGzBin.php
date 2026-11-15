@@ -65,11 +65,14 @@ class CleanGzBin extends StringValueObjectAdapter {
 	 * @throws IllegalValueException
 	 */
 	static function checkedFromUncompressed(?string $uncompressedString, bool $lenient = false): ?static {
-		if ($uncompressedString === null || ($uncompressedString === '' && $lenient)) {
+		if ($uncompressedString === null) {
 			return null;
 		}
 		if ($lenient) {
 			$uncompressedString = StringUtils::clean(trim($uncompressedString), static::SIMPLE_WHITESPACES_ONLY);
+			if ($uncompressedString === '') {
+				return null;
+			}
 		}
 		return new static(gzcompress($uncompressedString, 9));
 

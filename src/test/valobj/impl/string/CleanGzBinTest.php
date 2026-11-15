@@ -89,4 +89,12 @@ class CleanGzBinTest extends TestCase {
 		new SubCleanGzBin('ö');
 	}
 
+	/**
+	 * @throws IllegalValueException
+	 */
+	function testFromUncompressedLenientWhitespaceOnlyReturnsNull() {
+		$this->assertNull(CleanGzBin::checkedFromUncompressed('   ', true));
+		$this->assertNull(CleanGzBin::fromUncompressed('   ', true));
+		$this->assertNull(SubCleanGzBin::fromUncompressed(" \u{200C} ", true));
+	}
 }

@@ -24,7 +24,7 @@ abstract class NullableStringValueObjectArrayAdapter extends TypedArray {
 	#[Marshal]
 	static function marshalMapper(): Mapper {
 		return Mappers::value(fn (NullableStringValueObjectArrayAdapter $strings) => array_map(
-				fn (StringValueObject $string) => $string->toScalar(),
+				fn (?StringValueObject $string) => $string?->toScalar(),
 				$strings->toArray()));
 	}
 

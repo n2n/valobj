@@ -14,6 +14,8 @@ use n2n\validation\plan\ErrorMap;
 use valobj\string\LongLabel;
 use valobj\impl\string\mock\SubDirtyString;
 use valobj\string\DirtyString;
+use n2n\util\ex\err\ConfigurationError;
+use valobj\impl\string\mock\IllegalMinLengthDirtyString;
 
 class DirtyStringTest extends TestCase {
 
@@ -96,5 +98,10 @@ class DirtyStringTest extends TestCase {
 		$subDirtyString = $result->get();
 		$this->assertInstanceOf(SubDirtyString::class, $subDirtyString);
 		$this->assertEquals(new SubDirtyString('very-short'), $subDirtyString);
+	}
+
+	function testIllegalMinLengthConstantInSubclass(): void {
+		$this->expectException(ConfigurationError::class);
+		new IllegalMinLengthDirtyString('Testerich');
 	}
 }
