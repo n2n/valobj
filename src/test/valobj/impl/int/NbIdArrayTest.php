@@ -47,4 +47,10 @@ class NbIdArrayTest extends TestCase {
 		$this->assertTrue(assert($errorMap instanceof ErrorMap));
 		$this->assertEquals('Min [min = 1]', (string) $errorMap->getAllMessages()[0]);
 	}
+
+	function testJsonSerialize(): void {
+		$this->assertEquals('[1,2]', json_encode(new NbIdArray([NbId::from(1), NbId::from(2)])));
+		$this->assertEquals('[]', json_encode(new NbIdArray()));
+		$this->assertEquals('{"a":1,"b":2}', json_encode(new NbIdArray(['a' => NbId::from(1), 'b' => NbId::from(2)])));
+	}
 }

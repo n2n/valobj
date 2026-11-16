@@ -19,13 +19,17 @@ use n2n\validation\validator\impl\Validators;
  * @extends TypedArray<K, V>
  */
 #[ValueType(StringValueObject::class, nullable: true)]
-abstract class NullableStringValueObjectArrayAdapter extends TypedArray {
+abstract class NullableStringValueObjectArrayAdapter extends TypedArray implements \JsonSerializable {
 
 	#[Marshal]
 	static function marshalMapper(): Mapper {
 		return Mappers::value(fn (NullableStringValueObjectArrayAdapter $strings) => array_map(
 				fn (?StringValueObject $string) => $string?->toScalar(),
 				$strings->toArray()));
+	}
+
+	function jsonSerialize(): array {
+		return $this->toArray();
 	}
 
 	#[Unmarshal]

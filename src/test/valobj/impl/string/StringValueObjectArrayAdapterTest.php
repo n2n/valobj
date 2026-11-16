@@ -46,4 +46,9 @@ class StringValueObjectArrayAdapterTest extends TestCase {
 		$this->assertTrue(assert($errorMap instanceof ErrorMap));
 		$this->assertEquals('Email', (string) $errorMap->getAllMessages()[0]);
 	}
+
+	function testJsonSerialize(): void {
+		$emails = new EmailArray([Email::from('paul@holeradio.ch'), Email::from('super-paul@holeradio.ch')]);
+		$this->assertEquals('["paul@holeradio.ch","super-paul@holeradio.ch"]', json_encode($emails));
+	}
 }

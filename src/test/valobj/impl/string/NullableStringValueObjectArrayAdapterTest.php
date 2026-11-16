@@ -44,4 +44,9 @@ class NullableStringValueObjectArrayAdapterTest extends TestCase {
 		$this->assertTrue($result->isValid());
 		$this->assertEquals([Email::from('paul@holeradio.ch'), null], $result->get()['key1']->toArray());
 	}
+
+	function testJsonSerializeWithNull(): void {
+		$emails = new NullableEmailArray([Email::from('paul@holeradio.ch'), null]);
+		$this->assertEquals('["paul@holeradio.ch",null]', json_encode($emails));
+	}
 }
